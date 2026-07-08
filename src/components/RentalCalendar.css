@@ -1,0 +1,221 @@
+/* ================================================================
+   RentalCalendar.css — Austere flat calendar styling
+   Himalix Labs — Bugatti-Inspired Austere Luxury Design System
+   ================================================================ */
+
+.premium-calendar-container {
+  background: var(--bg-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 0px;
+  padding: var(--space-4);
+  max-width: 400px;
+  margin: 0 auto;
+  font-family: var(--font-sans);
+  color: var(--text-0);
+  box-shadow: none;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: var(--space-2);
+}
+
+.calendar-month-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-0);
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.calendar-nav-btn {
+  background: var(--bg-1);
+  border: 1px solid var(--border-strong);
+  color: var(--text-0);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 0px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.calendar-nav-btn:hover {
+  background: var(--accent);
+  color: var(--bg-0);
+  border-color: var(--accent);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--text-xs);
+  color: var(--text-3);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+}
+
+.calendar-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 2px;
+  column-gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.calendar-day {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  border: none;
+  color: var(--text-1);
+  border-radius: 0px;
+}
+
+.calendar-day:hover:not(.disabled):not(.range-start):not(.range-end):not(.range-between) {
+  background: var(--bg-3);
+  color: var(--text-0);
+}
+
+.calendar-day.empty {
+  background: var(--bg-2);
+  cursor: default;
+}
+
+.calendar-day.disabled {
+  cursor: not-allowed;
+  background: var(--bg-2);
+  color: var(--text-3);
+}
+
+.calendar-day.past {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.calendar-day.booked {
+  background: rgba(217, 83, 79, 0.08);
+  color: var(--danger);
+  position: relative;
+}
+
+.booked-strikethrough {
+  position: absolute;
+  width: 70%;
+  height: 1px;
+  background: var(--danger);
+  transform: rotate(-45deg);
+  pointer-events: none;
+}
+
+.calendar-day.range-start {
+  background: var(--accent) !important;
+  color: var(--bg-0) !important;
+  font-weight: 700;
+}
+
+.calendar-day.range-end {
+  background: var(--accent) !important;
+  color: var(--bg-0) !important;
+  font-weight: 700;
+}
+
+.calendar-day.range-between {
+  background: var(--bg-3) !important;
+  color: var(--text-0);
+  border-bottom: 2px solid var(--accent);
+  border-radius: 0px;
+}
+
+.calendar-legend {
+  display: flex;
+  justify-content: space-around;
+  margin-top: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-xxs);
+  color: var(--text-2);
+  border-top: 1px solid var(--border-strong);
+  padding-top: var(--space-3);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+}
+
+.legend-color {
+  width: 8px;
+  height: 8px;
+  border-radius: 0px;
+  display: inline-block;
+  border: 1px solid var(--border-strong);
+}
+
+.legend-color.available {
+  background: var(--bg-1);
+}
+
+.legend-color.booked {
+  background: rgba(217, 83, 79, 0.2);
+  border-color: var(--danger);
+}
+
+.legend-color.selected {
+  background: var(--accent);
+}
+
+.calendar-selection-summary {
+  margin-top: var(--space-4);
+  background: var(--bg-3);
+  border: 1px solid var(--border-strong);
+  border-radius: 0px;
+  padding: var(--space-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-1);
+}
+
+.selection-details {
+  line-height: 1.5;
+}
+
+.calendar-clear-btn {
+  background: none;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  padding: 4px 10px;
+  border-radius: 0px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xxs);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all var(--transition-fast);
+}
+
+.calendar-clear-btn:hover {
+  background: var(--danger);
+  color: var(--bg-0);
+}

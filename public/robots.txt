@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Block search engines from crawling administration portals
+Disallow: /admin/
+Disallow: /project/admin/
+Disallow: /store/admin/
+
+# Block crawling of secure/private user areas
+Disallow: /store/cart
+Disallow: /store/profile
+Disallow: /verify-email
+
+# Reference to the sitemap location
+Sitemap: https://himalixlabs.tech/sitemap.xml
