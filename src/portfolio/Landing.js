@@ -8,17 +8,24 @@ import SEO from '../components/SEO';
 
 /* ── Inline interactive hooks ── */
 
-/** Mouse-tracking parallax for hero orbs */
+/** Mouse-tracking parallax and container-relative spotlight coordinate tracker */
 function useMouseParallax() {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const onMove = (e) => {
+      const rect = el.getBoundingClientRect();
       const x = (e.clientX / window.innerWidth - 0.5) * 2;
       const y = (e.clientY / window.innerHeight - 0.5) * 2;
       el.style.setProperty('--mx', x.toFixed(3));
       el.style.setProperty('--my', y.toFixed(3));
+
+      // Spotlight cursor tracking relative to the hero container
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+      el.style.setProperty('--mouse-px', `${px.toFixed(1)}px`);
+      el.style.setProperty('--mouse-py', `${py.toFixed(1)}px`);
     };
     window.addEventListener('mousemove', onMove, { passive: true });
     return () => window.removeEventListener('mousemove', onMove);
@@ -53,63 +60,6 @@ function useTiltHandlers() {
     e.currentTarget.style.transform = '';
   }, []);
   return { onMouseMove, onMouseLeave };
-}
-
-/** Lightweight hero particles canvas */
-function HeroParticles() {
-  const canvasRef = useRef(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let raf;
-    const resize = () => {
-      canvas.width = canvas.parentElement.offsetWidth;
-      canvas.height = canvas.parentElement.offsetHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
-    const dots = Array.from({ length: 40 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.5 + 0.5,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      o: Math.random() * 0.4 + 0.1,
-    }));
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      dots.forEach(d => {
-        d.x += d.vx; d.y += d.vy;
-        if (d.x < 0 || d.x > canvas.width) d.vx *= -1;
-        if (d.y < 0 || d.y > canvas.height) d.vy *= -1;
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${d.o})`;
-        ctx.fill();
-      });
-      // connections
-      for (let i = 0; i < dots.length; i++) {
-        for (let j = i + 1; j < dots.length; j++) {
-          const dx = dots[i].x - dots[j].x;
-          const dy = dots[i].y - dots[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 100) {
-            ctx.beginPath();
-            ctx.moveTo(dots[i].x, dots[i].y);
-            ctx.lineTo(dots[j].x, dots[j].y);
-            ctx.strokeStyle = `rgba(255,255,255,${(1 - dist / 100) * 0.06})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-      raf = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
-  }, []);
-  return <canvas ref={canvasRef} className="hero__particles" aria-hidden="true" />;
 }
 
 /** Marquee strip */
@@ -269,12 +219,13 @@ export default function Landing() {
         <div className="hero__bg">
           <div className="hero__grid" aria-hidden="true" />
           <div className="hero__accent-line" aria-hidden="true" />
+          {/* Mouse tracking radial spotlight */}
+          <div className="hero__spotlight" aria-hidden="true" />
           {/* Ambient glow orbs — parallax-driven */}
           <div className="hero__orb hero__orb--1" aria-hidden="true" />
           <div className="hero__orb hero__orb--2" aria-hidden="true" />
           <div className="hero__orb hero__orb--3" aria-hidden="true" />
         </div>
-        <HeroParticles />
         <div className="hero__split">
           {/* LEFT — Copy */}
           <div className="hero__left">
@@ -365,10 +316,10 @@ export default function Landing() {
                   key={card.title}
                   to={card.link}
                   className="hero-card"
-                  style={{ 
-                    '--card-accent': card.accent, 
-                    '--card-accent-rgb': card.accentRgb, 
-                    '--card-delay': card.delay 
+                  style={{
+                    '--card-accent': card.accent,
+                    '--card-accent-rgb': card.accentRgb,
+                    '--card-delay': card.delay
                   }}
                   title={`Explore ${card.title}`}
                   onMouseMove={tilt.onMouseMove}
@@ -391,10 +342,16 @@ export default function Landing() {
             </div>
           </div>
         </div>
-        <div className="hero__scroll-hint" aria-hidden="true">
-          <i className="fa-light fa-sharp fa-chevron-down" />
+        <button
+          className="hero__scroll-hint"
+          onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
+          aria-label="Scroll to services showcase"
+        >
+          <div className="hero__scroll-hint-mouse">
+            <div className="hero__scroll-hint-wheel" />
+          </div>
           <span>Scroll</span>
-        </div>
+        </button>
       </section>
 
       {/* ── MARQUEE STRIP ── */}
@@ -543,7 +500,7 @@ export default function Landing() {
             <ScrollReveal from="right">
               <div className="about__visual" aria-hidden="true">
                 <div className="about__visual-grid-bg" />
-                
+
                 {/* Connection lines from center core to floating tags */}
                 <svg className="about__visual-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
                   <line x1="50" y1="50" x2="22" y2="18" className="about__line about__line--1" style={{ '--line-accent': '#3b82f6' }} />
