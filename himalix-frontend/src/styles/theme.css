@@ -1,0 +1,214 @@
+/* ================================================================
+   theme.css — Design tokens, color modes, typography scale
+   Himalix Labs — Bugatti-Inspired Austere Luxury Design System
+   ================================================================ */
+
+/* ── CSS Custom Properties ── */
+:root {
+  /* Font families */
+  --font-sans: 'EB Garamond', Garamond, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Saira Condensed', sans-serif;
+
+  /* Type scale */
+  --text-xxs: 10px;
+  --text-muted: var(--text-3);
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
+  --text-4xl: 48px;
+  --text-5xl: 64px;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-section: 120px;
+
+  /* Layout */
+  --max-width: 1280px;
+  --max-width-lg: 1440px;
+  --sidebar-width: 240px;
+
+  /* Strict zero-border radius, except buttons */
+  --radius: 0px;
+  --radius-button: 9999px;
+
+  /* Transitions (Premium Easing) */
+  --transition-fast: 250ms cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-base: 450ms cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-slow: 700ms cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-bounce: 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Monochrome primary accents */
+  --accent: #ffffff;
+  --accent-dim: #cccccc;
+  --accent-bright: #ffffff;
+
+  /* Semantic Bugatti colors */
+  --success: #5fa657;
+  --danger: #d9534f;
+  --warning: #d4a017;
+  --info: #c3d9f3; /* desaturated ice-blue link */
+  
+  /* Focus Rings for accessibility */
+  --focus-ring: 0 0 0 2px var(--bg-0), 0 0 0 4px var(--accent);
+}
+
+/* ── Monochrome Dark Mode (Default) ── */
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-0: #000000;         /* pure black canvas */
+  --bg-1: #0d0d0d;         /* surface soft */
+  --bg-2: #141414;         /* surface card */
+  --bg-3: #1f1f1f;         /* surface elevated */
+  --bg-4: #262626;         /* hairline / borders */
+
+  --bg-primary: var(--bg-1);
+  --bg-secondary: var(--bg-2);
+  --bg-tertiary: var(--bg-3);
+
+  --border: #262626;
+  --border-strong: #3a3a3a;
+  --border-accent: #ffffff40;
+  --border-color: var(--border);
+
+  --text-0: #ffffff;
+  --text-1: #cccccc;
+  --text-2: #999999;
+  --text-3: #666666;
+
+  --accent: #ffffff;
+  --accent-dim: #cccccc;
+  --accent-bright: #ffffff;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  --overlay: rgba(0,0,0,0.9);
+  
+  --glass-bg: rgba(20, 20, 20, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(24px);
+}
+
+/* ── Monochrome Light Mode ── */
+[data-theme='light'] {
+  color-scheme: light;
+
+  --bg-0: #ffffff;         /* pure white canvas */
+  --bg-1: #f7f7f7;         /* surface soft */
+  --bg-2: #eeeeee;         /* surface card */
+  --bg-3: #fcfcfc;         /* surface elevated */
+  --bg-4: #e0e0e0;         /* hairline / borders */
+
+  --bg-primary: var(--bg-1);
+  --bg-secondary: var(--bg-2);
+  --bg-tertiary: var(--bg-3);
+
+  --border: #e0e0e0;
+  --border-strong: #888888;
+  --border-accent: #00000040;
+  --border-color: var(--border);
+
+  --text-0: #000000;
+  --text-1: #222222;
+  --text-2: #555555;
+  --text-3: #888888;
+
+  --accent: #000000;
+  --accent-dim: #333333;
+  --accent-bright: #000000;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.05);
+
+  --overlay: rgba(255,255,255,0.95);
+  
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-blur: blur(24px);
+}
+
+/* ── Breadcrumbs Component Styling ── */
+.breadcrumbs {
+  padding: var(--space-3) 0;
+  margin-bottom: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.5px;
+}
+
+.breadcrumbs__list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.breadcrumbs__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-2);
+}
+
+.breadcrumbs__link {
+  color: var(--text-2);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color var(--transition-fast);
+}
+
+.breadcrumbs__link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.breadcrumbs__separator {
+  color: var(--text-3);
+  font-weight: 300;
+  user-select: none;
+}
+
+.breadcrumbs__current {
+  color: var(--text-0);
+  font-weight: 600;
+}
+
+/* ── Global Keyframes ── */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
+

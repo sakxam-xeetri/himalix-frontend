@@ -1,0 +1,255 @@
+import React, { useState, useEffect } from 'react';
+import useBatchSelection from '../../../hooks/useBatchSelection';
+import BatchCheckbox from '../../components/BatchCheckbox';
+import BatchActionBar from '../../components/BatchActionBar';
+import BatchToast from '../../components/BatchToast';
+import { exportToCsv } from '../../utils/csvExport';
+
+export default function ReviewManager({ reviews, authFetch, onLoad }) {
+  const [search, setSearch] = useState('');
+  const [deleteModal, setDeleteModal] = useState(null); // holds review object
+  const [loading, setLoading] = useState(false);
+
+  const {
+    selectedIds,
+    toggleSelect,
+    toggleSelectAll,
+    clearSelection,
+    isSelected,
+    isSelectedAll,
+    isIndeterminate,
+    selectionCount
+  } = useBatchSelection();
+
+  const [batchLoading, setBatchLoading] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setDeleteModal(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const filtered = reviews.filter(r => 
+    r.comment?.toLowerCase().includes(search.toLowerCase()) ||
+    r.product_name.toLowerCase().includes(search.toLowerCase()) ||
+    r.product_sku.toLowerCase().includes(search.toLowerCase()) ||
+    r.user_email.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <i 
+          key={i} 
+          className={`fa-sharp fa-star ${i <= rating ? 'fa-solid' : 'fa-light'}`} 
+          style={{ color: i <= rating ? 'var(--accent)' : 'var(--text-3)', marginRight: 2 }} 
+        />
+      );
+    }
+    return stars;
+  };
+
+  const handleDeleteReview = async () => {
+    if (!deleteModal) return;
+    loading || setLoading(true);
+    try {
+      const res = await authFetch(`/api/store/admin/reviews/${deleteModal.id}`, {
+        method: 'DELETE'
+      });
+      if (!res.ok) throw new Error('Failed to delete review');
+      setDeleteModal(null);
+      onLoad();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBatchDelete = async () => {
+    setBatchLoading(true);
+    try {
+      const res = await authFetch('/api/store/admin/batch-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'reviews', ids: selectedIds })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Batch delete failed');
+      clearSelection();
+      onLoad();
+      setToast({ message: `Successfully deleted ${selectedIds.length} reviews`, type: 'success' });
+    } catch (err) {
+      setToast({ message: err.message, type: 'error' });
+    } finally {
+      setBatchLoading(false);
+    }
+  };
+
+  const handleExportCsv = () => {
+    const exportData = reviews.filter(r => selectedIds.includes(r.id));
+    const columns = [
+      { header: 'ID', key: 'id' },
+      { header: 'Product Name', key: 'product_name' },
+      { header: 'Product SKU', key: 'product_sku' },
+      { header: 'Customer Email', key: 'user_email' },
+      { header: 'Rating', key: 'rating' },
+      { header: 'Comment', key: 'comment' },
+      { header: 'Review Date', key: (r) => new Date(r.created_at).toLocaleDateString() }
+    ];
+    exportToCsv(exportData, columns, 'reviews_export');
+  };
+
+  return (
+    <div className="admin-reviews">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="page-title">Product Reviews ({reviews.length})</h2>
+        <div className="form-group mb-0" style={{ maxWidth: 300, flex: 1 }}>
+          <input 
+            className="form-input" 
+            placeholder="Search comment, product or user..." 
+            value={search} 
+            onChange={e => setSearch(e.target.value)} 
+          />
+        </div>
+      </div>
+
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th style={{ width: '40px' }}>
+                <BatchCheckbox
+                  checked={isSelectedAll(filtered)}
+                  indeterminate={isIndeterminate(filtered)}
+                  onChange={() => toggleSelectAll(filtered)}
+                />
+              </th>
+              <th>ID</th>
+              <th>Product Info</th>
+              <th>Customer</th>
+              <th>Rating</th>
+              <th>Comment</th>
+              <th>Review Date</th>
+              <th style={{ textAlign: 'right' }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map(r => {
+              const selected = isSelected(r.id);
+              return (
+                <tr key={r.id} className={selected ? 'row-selected' : ''}>
+                  <td>
+                    <BatchCheckbox
+                      checked={selected}
+                      onChange={() => toggleSelect(r.id)}
+                    />
+                  </td>
+                  <td data-label="ID">#{r.id}</td>
+                  <td data-label="Product">
+                    <div>
+                      <span className="font-semibold" style={{ display: 'block' }}>{r.product_name}</span>
+                      <code style={{ fontSize: 'var(--text-xs)', color: 'var(--text-2)' }}>{r.product_sku}</code>
+                    </div>
+                  </td>
+                  <td data-label="Customer">{r.user_email}</td>
+                  <td data-label="Rating">
+                    <div className="flex" title={`${r.rating} / 5 stars`}>
+                      {renderStars(r.rating)}
+                    </div>
+                  </td>
+                  <td data-label="Comment">
+                    <p className="admin-review-comment" style={{ maxWidth: 350, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={r.comment}>
+                      {r.comment || <em style={{ color: 'var(--text-3)' }}>No comment left</em>}
+                    </p>
+                  </td>
+                  <td data-label="Review Date">{new Date(r.created_at).toLocaleDateString()}</td>
+                  <td data-label="Actions">
+                    <div className="flex justify-end">
+                      <button 
+                        className="btn btn-danger btn-sm" 
+                        onClick={() => setDeleteModal(r)}
+                        title="Delete Review"
+                      >
+                        <i className="fa-light fa-sharp fa-trash" /> Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan="8" style={{ textAlign: 'center', padding: 'var(--space-6)', color: 'var(--text-3)' }}>
+                  No reviews match your search criteria.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Delete Review Confirmation Modal */}
+      {deleteModal && (
+        <div className="admin-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setDeleteModal(null); }}>
+          <div className="admin-modal">
+            <div className="admin-modal__content" style={{ maxWidth: 450 }}>
+              <div className="admin-modal__header">
+                <h2 className="page-title" style={{ color: 'var(--danger)' }}>Confirm Deletion</h2>
+                <button type="button" className="btn btn-ghost" onClick={() => setDeleteModal(null)}>
+                  <i className="fa-light fa-sharp fa-xmark" />
+                </button>
+              </div>
+              <div className="admin-modal__body">
+                <p className="mb-4">
+                  Are you sure you want to permanently delete this product review? This action cannot be undone.
+                </p>
+                <div 
+                  style={{ 
+                    background: 'rgba(255,255,255,0.05)', 
+                    borderLeft: '3px solid var(--accent)', 
+                    padding: 'var(--space-3)', 
+                    marginBottom: 'var(--space-4)',
+                    fontSize: 'var(--text-sm)'
+                  }}
+                >
+                  <strong>Customer:</strong> {deleteModal.user_email}<br/>
+                  <strong>Product:</strong> {deleteModal.product_name}<br/>
+                  <strong>Rating:</strong> {deleteModal.rating} / 5<br/>
+                  <strong>Comment:</strong> "{deleteModal.comment || 'N/A'}"
+                </div>
+                <div className="admin-modal__footer flex justify-between mt-6">
+                  <button type="button" className="btn btn-outline" onClick={() => setDeleteModal(null)}>Cancel</button>
+                  <button type="button" className="btn btn-danger" onClick={handleDeleteReview} disabled={loading}>
+                    {loading ? 'Deleting...' : 'Delete Permanently'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <BatchActionBar
+        selectionCount={selectionCount}
+        onClearSelection={clearSelection}
+        onExportCsv={handleExportCsv}
+        loading={batchLoading}
+        actions={[
+          {
+            label: 'Delete Selected',
+            icon: 'trash',
+            variant: 'danger',
+            confirm: `Are you sure you want to delete ${selectionCount} reviews permanently?`,
+            onClick: handleBatchDelete
+          }
+        ]}
+      />
+      {toast && <BatchToast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+    </div>
+  );
+}
