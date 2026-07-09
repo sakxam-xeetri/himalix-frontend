@@ -1785,3 +1785,11 @@ input.sidebar-search-input[type="text"] {
   }
 }
 
+/* Sidebar Button Style Overrides */
+.store-sidebar .btn {
+  border-radius: 0 !important;
+  font-size: var(--text-xs);
+  letter-spacing: 1px;
+  padding: 8px 12px;
+}
+

@@ -173,7 +173,7 @@ export default function ProjectList() {
             <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 'var(--space-4)' }}>
               <button 
                 className="btn btn-primary" 
-                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-2)', height: '40px', padding: 0 }}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-2)' }}
                 onClick={() => setShowCustomModal(true)}
                 title="Submit a request for a custom engineering design, prototype or code"
               >
