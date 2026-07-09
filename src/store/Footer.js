@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -7,6 +7,17 @@ export default function StoreFooter() {
   const { systemConfig } = useAuth();
   const { theme } = useTheme();
   const year = new Date().getFullYear();
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubscribed(true);
+      setEmail('');
+      setTimeout(() => setSubscribed(false), 5000);
+    }
+  };
 
   // Load helpline phone and support email dynamically from system configuration, or fallback to default values
   const helplinePhone = systemConfig?.emergencyContactPhone || '9801234567';
@@ -19,20 +30,47 @@ export default function StoreFooter() {
     { label: 'Custom Projects', to: '/project' },
   ];
 
-  const company = [
-    { label: 'About Us', to: '/#about' },
-    { label: 'Our Team', to: '/#team' },
-    { label: 'Contact', to: '/#contact' },
-  ];
-
   const legal = [
     { label: 'Terms & Conditions', to: '/store/terms' },
     { label: 'End User License Agreement (EULA)', to: '/store/eula' },
   ];
 
+  const socials = [
+    { icon: 'github', url: 'https://github.com/himalixlabs', label: 'GitHub' },
+    { icon: 'linkedin', url: 'https://linkedin.com', label: 'LinkedIn' },
+    { icon: 'twitter', url: 'https://twitter.com', label: 'Twitter' },
+    { icon: 'instagram', url: 'https://instagram.com', label: 'Instagram' },
+  ];
+
   return (
     <footer className="footer" style={{ borderTop: '1px solid var(--border)', marginTop: 'var(--space-12)' }}>
       <div className="container" style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '0 var(--space-6)' }}>
+        {/* Newsletter */}
+        <div className="footer__newsletter">
+          <div className="footer__newsletter-info">
+            <h3 className="footer__newsletter-title">Stay in the loop</h3>
+            <p className="footer__newsletter-desc">Subscribe to receive tech updates, product arrivals, and design resources.</p>
+          </div>
+          <form className="footer__newsletter-form" onSubmit={handleSubscribe}>
+            <input
+              type="email"
+              placeholder={subscribed ? "Subscription received!" : "Enter your email address"}
+              className="footer__newsletter-input"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              disabled={subscribed}
+              required
+            />
+            <button type="submit" className="footer__newsletter-btn" aria-label="Subscribe" disabled={subscribed}>
+              {subscribed ? (
+                <i className="fa-light fa-sharp fa-check" style={{ color: 'var(--success)' }} />
+              ) : (
+                <i className="fa-light fa-sharp fa-arrow-right" />
+              )}
+            </button>
+          </form>
+        </div>
+
         <div className="footer__grid">
           {/* Brand */}
           <div>
@@ -58,6 +96,13 @@ export default function StoreFooter() {
               Nepal's premium electronics and tech destination — delivering quality components,
               3D printing filaments, and custom project boards.
             </p>
+            <div className="footer__socials">
+              {socials.map(s => (
+                <a key={s.icon} href={s.url} target="_blank" rel="noopener noreferrer" className="footer__social-link" aria-label={s.label}>
+                  <i className={`fa-brands fa-${s.icon}`} />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Services */}
@@ -74,14 +119,14 @@ export default function StoreFooter() {
               <i className="fa-light fa-sharp fa-headset" style={{ marginRight: '6px' }} />
               Support Contacts
             </div>
-            <div className="footer__link" style={{ cursor: 'default', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
               <div>
-                <strong style={{ color: 'var(--text-1)', display: 'block', fontSize: 'var(--text-xxs)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Support Phone:</strong>
-                <a href={`tel:${helplinePhone}`} style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-sm)' }}>{helplinePhone}</a>
+                <strong style={{ color: 'var(--text-1)', display: 'block', fontSize: 'var(--text-xxs)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Support Phone:</strong>
+                <a href={`tel:${helplinePhone}`} style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-sm)', textDecoration: 'none' }}>{helplinePhone}</a>
               </div>
-              <div style={{ marginTop: 'var(--space-2)' }}>
-                <strong style={{ color: 'var(--text-1)', display: 'block', fontSize: 'var(--text-xxs)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Support Email:</strong>
-                <a href={`mailto:${supportEmail}`} style={{ color: 'var(--accent)', fontSize: 'var(--text-sm)' }}>{supportEmail}</a>
+              <div>
+                <strong style={{ color: 'var(--text-1)', display: 'block', fontSize: 'var(--text-xxs)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Support Email:</strong>
+                <a href={`mailto:${supportEmail}`} style={{ color: 'var(--accent)', fontSize: 'var(--text-sm)', textDecoration: 'none' }}>{supportEmail}</a>
               </div>
             </div>
           </div>
@@ -97,6 +142,15 @@ export default function StoreFooter() {
 
         <div className="footer__bottom">
           <span>© {year} Himalix Labs. All rights reserved.</span>
+          <div className="footer__status">
+            <span className="status-pulse" />
+            <span>All Systems Operational</span>
+          </div>
+          <div className="footer__payments">
+            <span className="footer__payment-tag">eSewa</span>
+            <span className="footer__payment-tag">Khalti</span>
+            <span className="footer__payment-tag">Fonepay</span>
+          </div>
           <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <i className="fa-light fa-sharp fa-location-dot" /> Kathmandu, Nepal
           </span>

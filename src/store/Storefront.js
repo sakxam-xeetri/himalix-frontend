@@ -15,15 +15,71 @@ const SORT_OPTIONS = [
   { value: 'name_asc', label: 'Name A-Z' },
 ];
 
-const CATEGORY_ICONS = {
-  'Microcontrollers': 'fa-microchip',
-  'Sensors': 'fa-satellite-dish',
-  'Motors': 'fa-gear',
-  'Raspberry Pi': 'fa-desktop',
-  'Displays': 'fa-tv',
-  'Power': 'fa-bolt',
-  'Tools': 'fa-screwdriver-wrench',
-  'default': 'fa-cube',
+const PREDEFINED_CATEGORIES = [
+  'Development Boards',
+  'Sensors',
+  'Electronic Components',
+  'ICs',
+  'Modules',
+  'Displays',
+  'Motors & Robotics',
+  'Batteries & Power',
+  'Communication',
+  'Breadboards & Prototyping',
+  'PCB & Soldering',
+  'Connectors & Cables',
+  'Tools & Testing',
+  'Educational Kits',
+  'Accessories'
+];
+
+const mapCategory = (dbCategory) => {
+  if (!dbCategory) return 'Accessories';
+  const cat = dbCategory.toLowerCase();
+  
+  if (cat.includes('sensor') || cat.includes('photoresistor') || cat.includes('ldr')) {
+    return 'Sensors';
+  }
+  if (cat.includes('development') || (cat.includes('board') && cat.includes('kit')) || cat.includes('arduino') || cat.includes('raspberry') || cat.includes('esp32') || cat.includes('esp8266') || cat.includes('nucleo') || cat.includes('stm32')) {
+    return 'Development Boards';
+  }
+  if (cat.includes('capacitor') || cat.includes('diode') || cat.includes('mosfet') || cat.includes('resistor') || cat.includes('transistor') || cat.includes('relay') || cat.includes('inductor') || cat.includes('led') || cat.includes('switch') || cat.includes('potentiometer')) {
+    return 'Electronic Components';
+  }
+  if (cat.includes('ic') || cat.includes('integrated circuit') || cat.includes('chip') || cat.includes('microcontroller') || cat.includes('optocoupler') || cat.includes('driver')) {
+    return 'ICs';
+  }
+  if (cat.includes('module') || cat.includes('shield') || cat.includes('sensor modules')) {
+    return 'Modules';
+  }
+  if (cat.includes('display') || cat.includes('lcd') || cat.includes('oled') || cat.includes('tft') || cat.includes('screen') || cat.includes('segment')) {
+    return 'Displays';
+  }
+  if (cat.includes('motor') || cat.includes('servo') || cat.includes('stepper') || cat.includes('robot') || cat.includes('chassis') || cat.includes('gear') || cat.includes('solenoid') || cat.includes('wheel')) {
+    return 'Motors & Robotics';
+  }
+  if (cat.includes('battery') || cat.includes('power') || cat.includes('charger') || cat.includes('voltage') || cat.includes('boost') || cat.includes('buck') || cat.includes('power supply') || cat.includes('regulator') || cat.includes('converter')) {
+    return 'Batteries & Power';
+  }
+  if (cat.includes('communication') || cat.includes('wireless') || cat.includes('bluetooth') || cat.includes('wifi') || cat.includes('nrf') || cat.includes('antenna') || cat.includes('rf') || cat.includes('gps') || cat.includes('lora') || cat.includes('transceiver')) {
+    return 'Communication';
+  }
+  if (cat.includes('breadboard') || cat.includes('prototyping') || cat.includes('jumper') || cat.includes('perfboard') || cat.includes('matrix')) {
+    return 'Breadboards & Prototyping';
+  }
+  if (cat.includes('pcb') || cat.includes('soldering') || cat.includes('iron') || cat.includes('solder') || cat.includes('flux') || cat.includes('desoldering')) {
+    return 'PCB & Soldering';
+  }
+  if (cat.includes('connector') || cat.includes('cable') || cat.includes('wire') || cat.includes('strip') || cat.includes('terminal') || cat.includes('header') || cat.includes('plug') || cat.includes('jack')) {
+    return 'Connectors & Cables';
+  }
+  if (cat.includes('tool') || cat.includes('testing') || cat.includes('multimeter') || cat.includes('probe') || cat.includes('caliper') || cat.includes('scope') || cat.includes('analyzer') || cat.includes('programmer') || cat.includes('emulator') || cat.includes('debugger')) {
+    return 'Tools & Testing';
+  }
+  if (cat.includes('kit') || cat.includes('educational') || cat.includes('learning') || cat.includes('starter') || cat.includes('diy')) {
+    return 'Educational Kits';
+  }
+  return 'Accessories';
 };
 
 const STOCK_OPTIONS = [
@@ -31,14 +87,6 @@ const STOCK_OPTIONS = [
   { value: 'in', label: 'In Stock' },
   { value: 'low', label: 'Low Stock' },
   { value: 'out', label: 'Out of Stock' },
-];
-
-const PRICE_RANGES = [
-  { value: 'all', label: 'Any Price' },
-  { value: '0-500', label: 'Under Rs. 500' },
-  { value: '500-1000', label: 'Rs. 500 - 1,000' },
-  { value: '1000-5000', label: 'Rs. 1,000 - 5,000' },
-  { value: '5000+', label: 'Over Rs. 5,000' },
 ];
 
 export default function Storefront() {
@@ -70,10 +118,13 @@ export default function Storefront() {
     const q = searchParams.get('search') || '';
     setSearch(q);
   }, [searchParams]);
+
   const [activeCategory, setCategory] = useState('all');
   const [sort, setSort] = useState('default');
   const [stockFilter, setStockFilter] = useState('all');
-  const [priceRange, setPriceRange] = useState('all');
+  const [imageFilter, setImageFilter] = useState(false);
+  const [maxPriceLimit, setMaxPriceLimit] = useState(10000);
+  const [maxPriceFilter, setMaxPriceFilter] = useState(10000);
   const [categorySearch, setCategorySearch] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,7 +132,7 @@ export default function Storefront() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeCategory, search, sort, stockFilter, priceRange]);
+  }, [activeCategory, search, sort, stockFilter, imageFilter, maxPriceFilter]);
 
   useEffect(() => {
     fetch('/api/store/products')
@@ -92,31 +143,40 @@ export default function Storefront() {
       .then(data => {
         const prods = data.products || [];
         setProducts(prods);
+
+        // Dynamically compute the maximum price limit based on fetched products
+        if (prods.length > 0) {
+          const highest = Math.max(...prods.map(p => p.price || 0), 1000);
+          const roundedHighest = Math.ceil(highest / 500) * 500;
+          setMaxPriceLimit(roundedHighest);
+          setMaxPriceFilter(roundedHighest);
+        }
       })
       .catch(() => setError('Failed to load products.'))
       .finally(() => setLoading(false));
   }, []);
 
   const categories = useMemo(() => {
-    const cats = [...new Set(products.map(p => p.category).filter(Boolean))];
-    return cats.sort();
-  }, [products]);
+    return PREDEFINED_CATEGORIES;
+  }, []);
 
   const categoryCounts = useMemo(() => {
     const counts = {};
+    PREDEFINED_CATEGORIES.forEach(cat => {
+      counts[cat] = 0;
+    });
     products.forEach(p => {
-      if (p.category) {
-        counts[p.category] = (counts[p.category] || 0) + 1;
-      }
+      const mapped = mapCategory(p.category);
+      counts[mapped] = (counts[mapped] || 0) + 1;
     });
     return counts;
   }, [products]);
 
   const filteredCategories = useMemo(() => {
-    if (!categorySearch.trim()) return categories;
+    if (!categorySearch.trim()) return PREDEFINED_CATEGORIES;
     const q = categorySearch.toLowerCase();
-    return categories.filter(cat => cat.toLowerCase().includes(q));
-  }, [categories, categorySearch]);
+    return PREDEFINED_CATEGORIES.filter(cat => cat.toLowerCase().includes(q));
+  }, [categorySearch]);
 
   const featuredProducts = useMemo(() => {
     return products
@@ -129,7 +189,7 @@ export default function Storefront() {
     let list = [...products];
 
     if (activeCategory !== 'all') {
-      list = list.filter(p => p.category === activeCategory);
+      list = list.filter(p => mapCategory(p.category) === activeCategory);
     }
 
     if (search.trim()) {
@@ -137,7 +197,7 @@ export default function Storefront() {
       list = list.filter(p =>
         p.name.toLowerCase().includes(q) ||
         (p.description || '').toLowerCase().includes(q) ||
-        (p.category || '').toLowerCase().includes(q)
+        mapCategory(p.category).toLowerCase().includes(q)
       );
     }
 
@@ -153,18 +213,13 @@ export default function Storefront() {
       });
     }
 
-    if (priceRange !== 'all') {
-      list = list.filter(p => {
-        const price = p.price || 0;
-        switch (priceRange) {
-          case '0-500': return price < 500;
-          case '500-1000': return price >= 500 && price <= 1000;
-          case '1000-5000': return price > 1000 && price <= 5000;
-          case '5000+': return price > 5000;
-          default: return true;
-        }
-      });
+    // Apply Reference Image Filter
+    if (imageFilter) {
+      list = list.filter(p => p.image_url && p.image_url !== '/placeholder.svg' && !p.image_url.includes('placeholder'));
     }
+
+    // Apply Max Price Range Slider filter
+    list = list.filter(p => (p.price || 0) <= maxPriceFilter);
 
     switch (sort) {
       case 'price_asc': list.sort((a, b) => a.price - b.price); break;
@@ -175,7 +230,7 @@ export default function Storefront() {
     }
 
     return list;
-  }, [products, activeCategory, search, sort, stockFilter, priceRange]);
+  }, [products, activeCategory, search, sort, stockFilter, imageFilter, maxPriceFilter]);
 
   const clearAllFilters = useCallback(() => {
     setSearch('');
@@ -183,10 +238,11 @@ export default function Storefront() {
     setCategory('all');
     setSort('default');
     setStockFilter('all');
-    setPriceRange('all');
-  }, []);
+    setImageFilter(false);
+    setMaxPriceFilter(maxPriceLimit);
+  }, [maxPriceLimit, setSearchParams]);
 
-  const hasActiveFilters = search || activeCategory !== 'all' || sort !== 'default' || stockFilter !== 'all' || priceRange !== 'all';
+  const hasActiveFilters = search || activeCategory !== 'all' || sort !== 'default' || stockFilter !== 'all' || imageFilter || maxPriceFilter < maxPriceLimit;
 
   return (
     <div className="store-page">
@@ -304,25 +360,56 @@ export default function Storefront() {
                   </label>
                 ))}
               </div>
+              
+              {/* Reference Image Sub-filter */}
+              <div className="filter-sub-section" style={{ marginTop: 'var(--space-2)', paddingTop: 'var(--space-2)', borderTop: '1px solid var(--border)' }}>
+                <label className={`filter-row${imageFilter ? ' filter-row--active' : ''}`}>
+                  <input
+                    type="checkbox"
+                    checked={imageFilter}
+                    onChange={(e) => setImageFilter(e.target.checked)}
+                    className="filter-checkbox-input"
+                  />
+                  <span className="filter-checkbox-indicator" />
+                  <span className="filter-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="fa-light fa-image" style={{ fontSize: '12px' }} /> With Reference Image
+                  </span>
+                </label>
+              </div>
             </div>
 
-            {/* Filter Section: Price Range */}
+            {/* Filter Section: Price Range Slider */}
             <div className="filter-section">
-              <span className="filter-section-title">Price Range</span>
-              <div className="filter-list">
-                {PRICE_RANGES.map(opt => (
-                  <label key={opt.value} className={`filter-row${priceRange === opt.value ? ' filter-row--active' : ''}`}>
-                    <input
-                      type="radio"
-                      name="price-filter"
-                      checked={priceRange === opt.value}
-                      onChange={() => setPriceRange(opt.value)}
-                      className="filter-checkbox-input"
-                    />
-                    <span className="filter-checkbox-indicator" />
-                    <span className="filter-label">{opt.label}</span>
-                  </label>
-                ))}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span className="filter-section-title">Price Range</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', color: 'var(--accent)' }}>
+                  Max: Rs. {maxPriceFilter.toLocaleString()}
+                </span>
+              </div>
+              
+              <div className="price-slider-container" style={{ padding: 'var(--space-2) 0' }}>
+                <input
+                  type="range"
+                  min="0"
+                  max={maxPriceLimit}
+                  step={maxPriceLimit > 1000 ? 100 : 10}
+                  value={maxPriceFilter}
+                  onChange={e => setMaxPriceFilter(Number(e.target.value))}
+                  style={{
+                    width: '100%',
+                    accentColor: 'var(--accent)',
+                    cursor: 'pointer',
+                    background: 'var(--bg-4)',
+                    height: '4px',
+                    border: 'none',
+                    borderRadius: '0px'
+                  }}
+                  aria-label="Filter by maximum price"
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-3)', marginTop: 'var(--space-2)', fontFamily: 'var(--font-mono)' }}>
+                  <span>Rs. 0</span>
+                  <span>Rs. {maxPriceLimit.toLocaleString()}</span>
+                </div>
               </div>
             </div>
           </aside>
@@ -420,10 +507,18 @@ export default function Storefront() {
                       </button>
                     </span>
                   )}
-                  {priceRange !== 'all' && (
+                  {imageFilter && (
                     <span className="active-tag-item">
-                      {PRICE_RANGES.find(o => o.value === priceRange)?.label}
-                      <button onClick={() => setPriceRange('all')} aria-label="Remove price filter">
+                      With Reference Image
+                      <button onClick={() => setImageFilter(false)} aria-label="Remove image filter">
+                        <i className="fa-light fa-xmark" />
+                      </button>
+                    </span>
+                  )}
+                  {maxPriceFilter < maxPriceLimit && (
+                    <span className="active-tag-item">
+                      Price ≤ Rs. {maxPriceFilter}
+                      <button onClick={() => setMaxPriceFilter(maxPriceLimit)} aria-label="Remove price filter">
                         <i className="fa-light fa-xmark" />
                       </button>
                     </span>
