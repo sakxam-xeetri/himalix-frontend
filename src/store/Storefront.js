@@ -74,6 +74,7 @@ export default function Storefront() {
   const [sort, setSort] = useState('default');
   const [stockFilter, setStockFilter] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
+  const [categorySearch, setCategorySearch] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
@@ -110,6 +111,12 @@ export default function Storefront() {
     });
     return counts;
   }, [products]);
+
+  const filteredCategories = useMemo(() => {
+    if (!categorySearch.trim()) return categories;
+    const q = categorySearch.toLowerCase();
+    return categories.filter(cat => cat.toLowerCase().includes(q));
+  }, [categories, categorySearch]);
 
   const featuredProducts = useMemo(() => {
     return products
@@ -200,10 +207,9 @@ export default function Storefront() {
         }}
       />
       
-      <div style={{ maxWidth: 'var(--max-width)', margin: 'var(--space-4) auto 0 auto', padding: '0 var(--space-6)' }}>
+      <div style={{ maxWidth: 'var(--max-width-lg)', margin: 'var(--space-4) auto 0 auto', padding: '0 var(--space-4)' }}>
         <Breadcrumbs items={[{ label: 'Store', path: '/store' }]} />
       </div>
-
 
       {/* Promotional Projects Banner */}
       <div className="store-promo-banner" style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-0)', padding: 'var(--space-2) var(--space-4)', textAlign: 'center', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
@@ -213,246 +219,287 @@ export default function Storefront() {
         </Link>
       </div>
 
-      {/* Main Hero & Filters */}
-      <section className="store-hero">
-        <div className="store-hero__inner">
-          <div className="store-hero__content">
-            <div className="store-hero__eyebrow">
-              <i className="fa-light fa-sharp fa-store" /> Himalix Store
+      <div className="store-layout-container">
+        <div className="store-layout-wrapper">
+          
+          {/* Left Column: Filter Sidebar */}
+          <aside className="store-sidebar">
+            <div className="sidebar-header">
+              <span className="sidebar-title">Filters</span>
+              {hasActiveFilters && (
+                <button className="sidebar-clear-btn" onClick={clearAllFilters}>
+                  Clear All
+                </button>
+              )}
             </div>
-            <h1 className="store-hero__title">Electronics & Components</h1>
-            <p className="store-hero__subtitle">Quality components delivered across Nepal</p>
-          </div>
 
-          {/* Search */}
-          <div className="store-hero__search" role="search">
-            <span className="store-hero__search-icon" aria-hidden="true">
-              <i className="fa-light fa-sharp fa-magnifying-glass" />
-            </span>
-            <input
-              className="store-hero__search-input"
-              type="search"
-              placeholder={`Search ${products.length > 0 ? products.length + '+' : ''} products...`}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              aria-label="Search products"
-            />
-            {search && (
-              <button
-                className="store-hero__search-clear"
-                onClick={() => setSearch('')}
-                aria-label="Clear search"
-              >
-                <i className="fa-light fa-sharp fa-xmark" />
-              </button>
-            )}
-          </div>
+            {/* Filter Section: Category/Item Group */}
+            <div className="filter-section">
+              <span className="filter-section-title">Item Group</span>
+              
+              {/* Category Search box */}
+              <div className="sidebar-search-box">
+                <i className="fa-light fa-sharp fa-magnifying-glass search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search Item Groups..."
+                  value={categorySearch}
+                  onChange={e => setCategorySearch(e.target.value)}
+                  className="sidebar-search-input"
+                />
+                {categorySearch && (
+                  <button onClick={() => setCategorySearch('')} className="search-clear-btn">
+                    <i className="fa-light fa-sharp fa-xmark" />
+                  </button>
+                )}
+              </div>
 
-          {/* Category Chips */}
-          <div className="store-hero__categories" role="group" aria-label="Category quick filters">
-            <button
-              className={`store-hero__cat-chip${activeCategory === 'all' ? ' store-hero__cat-chip--active' : ''}`}
-              onClick={() => setCategory('all')}
-            >
-              <i className="fa-light fa-sharp fa-grid-2" />
-              <span>All</span>
-              <span className="store-hero__cat-count">{products.length}</span>
-            </button>
-            {categories.map(cat => (
-              <button
-                key={cat}
-                className={`store-hero__cat-chip${activeCategory === cat ? ' store-hero__cat-chip--active' : ''}`}
-                onClick={() => setCategory(cat)}
-              >
-                <i className={`fa-light fa-sharp ${CATEGORY_ICONS[cat] || CATEGORY_ICONS.default}`} />
-                <span>{cat}</span>
-                <span className="store-hero__cat-count">{categoryCounts[cat] || 0}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
+              {/* Category checklist */}
+              <div className="filter-list filter-list--scrollable">
+                <label className={`filter-row${activeCategory === 'all' ? ' filter-row--active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="category-filter"
+                    checked={activeCategory === 'all'}
+                    onChange={() => setCategory('all')}
+                    className="filter-checkbox-input"
+                  />
+                  <span className="filter-checkbox-indicator" />
+                  <span className="filter-label">All Categories</span>
+                  <span className="filter-count">{products.length}</span>
+                </label>
 
-      {/* Featured Products */}
-      {!loading && featuredProducts.length > 0 && !hasActiveFilters && (
-        <section className="store-featured">
-          <div className="store-featured__inner">
-            <div className="store-featured__header">
-              <h2 className="store-featured__title">Featured Products</h2>
-              <span className="store-featured__subtitle">Handpicked for you</span>
+                {filteredCategories.map(cat => (
+                  <label key={cat} className={`filter-row${activeCategory === cat ? ' filter-row--active' : ''}`}>
+                    <input
+                      type="radio"
+                      name="category-filter"
+                      checked={activeCategory === cat}
+                      onChange={() => setCategory(cat)}
+                      className="filter-checkbox-input"
+                    />
+                    <span className="filter-checkbox-indicator" />
+                    <span className="filter-label">{cat}</span>
+                    <span className="filter-count">{categoryCounts[cat] || 0}</span>
+                  </label>
+                ))}
+              </div>
             </div>
-            <div className="store-featured__scroll">
-              {featuredProducts.map(product => (
-                <div key={product.id} className="store-featured__item">
-                  <ProductCard product={product} featured />
+
+            {/* Filter Section: Stock Status */}
+            <div className="filter-section">
+              <span className="filter-section-title">Stock Status</span>
+              <div className="filter-list">
+                {STOCK_OPTIONS.map(opt => (
+                  <label key={opt.value} className={`filter-row${stockFilter === opt.value ? ' filter-row--active' : ''}`}>
+                    <input
+                      type="radio"
+                      name="stock-filter"
+                      checked={stockFilter === opt.value}
+                      onChange={() => setStockFilter(opt.value)}
+                      className="filter-checkbox-input"
+                    />
+                    <span className="filter-checkbox-indicator" />
+                    <span className="filter-label">{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Filter Section: Price Range */}
+            <div className="filter-section">
+              <span className="filter-section-title">Price Range</span>
+              <div className="filter-list">
+                {PRICE_RANGES.map(opt => (
+                  <label key={opt.value} className={`filter-row${priceRange === opt.value ? ' filter-row--active' : ''}`}>
+                    <input
+                      type="radio"
+                      name="price-filter"
+                      checked={priceRange === opt.value}
+                      onChange={() => setPriceRange(opt.value)}
+                      className="filter-checkbox-input"
+                    />
+                    <span className="filter-checkbox-indicator" />
+                    <span className="filter-label">{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </aside>
+
+          {/* Right Column: Main Content Catalog */}
+          <main className="store-main">
+            
+            {/* Title & Search bar row */}
+            <div className="store-main-header">
+              <h1 className="store-main-title">All Products</h1>
+              
+              <div className="store-catalog-search">
+                <i className="fa-light fa-sharp fa-magnifying-glass search-icon" />
+                <input
+                  type="search"
+                  placeholder={`Search ${products.length > 0 ? products.length + '+' : ''} products...`}
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="store-catalog-search-input"
+                  aria-label="Search products"
+                />
+                {search && (
+                  <button onClick={() => setSearch('')} className="search-clear-btn" aria-label="Clear search">
+                    <i className="fa-light fa-sharp fa-xmark" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Featured Products */}
+            {!loading && featuredProducts.length > 0 && !hasActiveFilters && (
+              <section className="store-featured" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 'var(--space-8)', marginBottom: 'var(--space-8)' }}>
+                <div className="store-featured__header" style={{ marginBottom: 'var(--space-4)' }}>
+                  <h2 className="store-featured__title" style={{ fontSize: 'var(--text-xl)' }}>Featured Products</h2>
+                  <span className="store-featured__subtitle">Handpicked for you</span>
                 </div>
-              ))}
+                <div className="store-featured__scroll">
+                  {featuredProducts.map(product => (
+                    <div key={product.id} className="store-featured__item">
+                      <ProductCard product={product} featured />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Toolbar showing Sort selection and result count */}
+            <div className="store-catalog-toolbar">
+              <span className="store-catalog-count">
+                Showing <strong>{filtered.length}</strong> products
+              </span>
+              
+              <div className="store-catalog-sort">
+                <span className="sort-label">Sort By:</span>
+                <select
+                  className="store-catalog-select"
+                  value={sort}
+                  onChange={e => setSort(e.target.value)}
+                  aria-label="Sort products"
+                >
+                  {SORT_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-        </section>
-      )}
 
-      {/* Toolbar */}
-      <div className="store-toolbar">
-        <div className="store-toolbar__inner">
-          <div className="store-toolbar__left">
-            <span className="store-toolbar__count">
-              Showing {filtered.length} products
-            </span>
-          </div>
-          <div className="store-toolbar__right">
-            <select
-              className="store-toolbar__select"
-              value={sort}
-              onChange={e => setSort(e.target.value)}
-              aria-label="Sort products"
-            >
-              {SORT_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-
-            <select
-              className="store-toolbar__select"
-              value={stockFilter}
-              onChange={e => setStockFilter(e.target.value)}
-              aria-label="Filter by stock"
-            >
-              {STOCK_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-
-            <select
-              className="store-toolbar__select"
-              value={priceRange}
-              onChange={e => setPriceRange(e.target.value)}
-              aria-label="Filter by price range"
-            >
-              {PRICE_RANGES.map(opt => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Active Filters Summary */}
-      {hasActiveFilters && (
-        <div className="store-active-filters">
-          <div className="store-active-filters__inner">
-            <div className="store-active-filters__tags">
-              {search && (
-                <span className="store-active-filters__tag">
-                  Search: "{search}"
-                  <button onClick={() => setSearch('')} aria-label="Remove search filter">
-                    <i className="fa-light fa-xmark" />
-                  </button>
-                </span>
-              )}
-              {activeCategory !== 'all' && (
-                <span className="store-active-filters__tag">
-                  {activeCategory}
-                  <button onClick={() => setCategory('all')} aria-label="Remove category filter">
-                    <i className="fa-light fa-xmark" />
-                  </button>
-                </span>
-              )}
-              {stockFilter !== 'all' && (
-                <span className="store-active-filters__tag">
-                  {STOCK_OPTIONS.find(o => o.value === stockFilter)?.label}
-                  <button onClick={() => setStockFilter('all')} aria-label="Remove stock filter">
-                    <i className="fa-light fa-xmark" />
-                  </button>
-                </span>
-              )}
-              {priceRange !== 'all' && (
-                <span className="store-active-filters__tag">
-                  {PRICE_RANGES.find(o => o.value === priceRange)?.label}
-                  <button onClick={() => setPriceRange('all')} aria-label="Remove price filter">
-                    <i className="fa-light fa-xmark" />
-                  </button>
-                </span>
-              )}
-            </div>
-            <button className="store-active-filters__clear" onClick={clearAllFilters}>
-              <i className="fa-light fa-xmark" /> Clear all
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content */}
-      <main className="store-content">
-        {loading && (
-          <div className="product-grid" aria-label="Loading products">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="skeleton-card">
-                <div className="skeleton-card__img" />
-                <div className="skeleton-card__body">
-                  <div className="skeleton-card__line skeleton-card__line--short" />
-                  <div className="skeleton-card__line skeleton-card__line--medium" />
-                  <div className="skeleton-card__line skeleton-card__line--long" />
-                  <div className="skeleton-card__footer">
-                    <div className="skeleton-card__line skeleton-card__line--price" />
-                    <div className="skeleton-card__line skeleton-card__line--btn" />
-                  </div>
+            {/* Active Filters tags */}
+            {hasActiveFilters && (
+              <div className="store-active-tags-container">
+                <div className="store-active-tags-list">
+                  {search && (
+                    <span className="active-tag-item">
+                      Search: "{search}"
+                      <button onClick={() => setSearch('')} aria-label="Remove search filter">
+                        <i className="fa-light fa-xmark" />
+                      </button>
+                    </span>
+                  )}
+                  {activeCategory !== 'all' && (
+                    <span className="active-tag-item">
+                      {activeCategory}
+                      <button onClick={() => setCategory('all')} aria-label="Remove category filter">
+                        <i className="fa-light fa-xmark" />
+                      </button>
+                    </span>
+                  )}
+                  {stockFilter !== 'all' && (
+                    <span className="active-tag-item">
+                      {STOCK_OPTIONS.find(o => o.value === stockFilter)?.label}
+                      <button onClick={() => setStockFilter('all')} aria-label="Remove stock filter">
+                        <i className="fa-light fa-xmark" />
+                      </button>
+                    </span>
+                  )}
+                  {priceRange !== 'all' && (
+                    <span className="active-tag-item">
+                      {PRICE_RANGES.find(o => o.value === priceRange)?.label}
+                      <button onClick={() => setPriceRange('all')} aria-label="Remove price filter">
+                        <i className="fa-light fa-xmark" />
+                      </button>
+                    </span>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            )}
 
-        {error && (
-          <div className="store-error">
-            <div className="store-error__icon">
-              <i className="fa-light fa-sharp fa-circle-exclamation" />
-            </div>
-            <p className="store-error__text">{error}</p>
-            <button className="btn btn-outline" onClick={() => window.location.reload()}>
-              Try Again
-            </button>
-          </div>
-        )}
+            {/* Product display */}
+            <div className="store-catalog-body">
+              {loading && (
+                <div className="product-grid" aria-label="Loading products">
+                  {Array.from({ length: 9 }).map((_, i) => (
+                    <div key={i} className="skeleton-card">
+                      <div className="skeleton-card__img" />
+                      <div className="skeleton-card__body">
+                        <div className="skeleton-card__line skeleton-card__line--short" />
+                        <div className="skeleton-card__line skeleton-card__line--medium" />
+                        <div className="skeleton-card__line skeleton-card__line--long" />
+                        <div className="skeleton-card__footer">
+                          <div className="skeleton-card__line skeleton-card__line--price" />
+                          <div className="skeleton-card__line skeleton-card__line--btn" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-        {!loading && !error && filtered.length === 0 && (
-          <div className="store-empty">
-            <div className="store-empty__icon">
-              <i className="fa-light fa-sharp fa-box-open" />
-            </div>
-            <h3 className="store-empty__title">No products found</h3>
-            <p className="store-empty__text">
-              {search
-                ? `No products match "${search}"`
-                : 'No products match your current filters'}
-            </p>
-            <button className="btn btn-primary" onClick={clearAllFilters}>
-              <i className="fa-light fa-xmark" /> Clear Filters
-            </button>
-          </div>
-        )}
+              {error && (
+                <div className="store-error">
+                  <div className="store-error__icon">
+                    <i className="fa-light fa-sharp fa-circle-exclamation" />
+                  </div>
+                  <p className="store-error__text">{error}</p>
+                  <button className="btn btn-outline" onClick={() => window.location.reload()}>
+                    Try Again
+                  </button>
+                </div>
+              )}
 
-        {!loading && !error && filtered.length > 0 && (
-          <>
-            <div className="product-grid">
-              {filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              {!loading && !error && filtered.length === 0 && (
+                <div className="store-empty">
+                  <div className="store-empty__icon">
+                    <i className="fa-light fa-sharp fa-box-open" />
+                  </div>
+                  <h3 className="store-empty__title">No products found</h3>
+                  <p className="store-empty__text">
+                    {search
+                      ? `No products match "${search}"`
+                      : 'No products match your current filters'}
+                  </p>
+                  <button className="btn btn-primary" onClick={clearAllFilters}>
+                    <i className="fa-light fa-xmark" /> Clear Filters
+                  </button>
+                </div>
+              )}
+
+              {!loading && !error && filtered.length > 0 && (
+                <>
+                  <div className="product-grid">
+                    {filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(product => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                  </div>
+                  <Pagination 
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(filtered.length / itemsPerPage)}
+                    onPageChange={setCurrentPage}
+                  />
+                </>
+              )}
             </div>
-            <Pagination 
-              currentPage={currentPage}
-              totalPages={Math.ceil(filtered.length / itemsPerPage)}
-              onPageChange={setCurrentPage}
-            />
-          </>
-        )}
-      </main>
+          </main>
+        </div>
+      </div>
 
       <StoreFooter />
     </div>
