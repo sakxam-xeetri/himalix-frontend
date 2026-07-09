@@ -5,6 +5,8 @@ import Footer from '../components/Footer';
 import LoadingScreen from '../components/LoadingScreen';
 import { useAuth } from '../auth/AuthContext';
 import Pagination from '../components/Pagination';
+import Breadcrumbs from '../components/Breadcrumbs';
+import SEO from '../components/SEO';
 
 export default function ProjectList() {
   const navigate = useNavigate();
@@ -142,246 +144,322 @@ export default function ProjectList() {
 
   return (
     <div className="store-page">
-      
-      {/* Main Hero & Filters */}
-      <section className="store-hero">
-        <div className="store-hero__inner">
-          <div className="store-hero__content">
-            <div className="store-hero__eyebrow">
-              <i className="fa-light fa-sharp fa-folder-open" /> Himalix Projects
-            </div>
-            <h1 className="store-hero__title">Prebuilt Tech Projects & Kits</h1>
-            <p className="store-hero__subtitle">Explore our collection of engineering prototypes, DIY kits, and custom source codes.</p>
-            <button 
-              className="btn btn-primary" 
-              style={{ marginTop: 'var(--space-4)', display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)' }}
-              onClick={() => setShowCustomModal(true)}
-              title="Submit a request for a custom engineering design, prototype or code"
-            >
-              <i className="fa-light fa-sharp fa-square-plus" />
-              Request Custom Project
-            </button>
-          </div>
+      <SEO 
+        title="Engineering Kits & DIY Projects Nepal"
+        description="Buy or rent prebuilt engineering projects, microcontroller kits, and custom source codes at Himalix Labs Nepal."
+        keywords="engineering projects nepal, buy robotics kits, rent diy projects kathmandu, tech prototypes marketplace"
+      />
 
-          {/* Search */}
-          <div className="store-hero__search" role="search">
-            <span className="store-hero__search-icon" aria-hidden="true">
-              <i className="fa-light fa-sharp fa-magnifying-glass" />
-            </span>
-            <input
-              className="store-hero__search-input"
-              type="search"
-              placeholder={`Search projects...`}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              aria-label="Search projects"
-            />
-            {search && (
-              <button
-                className="store-hero__search-clear"
-                onClick={() => setSearch('')}
-                aria-label="Clear search"
-              >
-                <i className="fa-light fa-sharp fa-xmark" />
-              </button>
-            )}
-          </div>
-
-          {/* Category Chips */}
-          <div className="store-hero__categories" role="group" aria-label="Type quick filters">
-            <button
-              className={`store-hero__cat-chip${filter === 'all' ? ' store-hero__cat-chip--active' : ''}`}
-              onClick={() => setFilter('all')}
-            >
-              <i className="fa-light fa-sharp fa-grid-2" />
-              <span>All Types</span>
-            </button>
-            <button
-              className={`store-hero__cat-chip${filter === 'sale' ? ' store-hero__cat-chip--active' : ''}`}
-              onClick={() => setFilter('sale')}
-            >
-              <i className="fa-light fa-sharp fa-tags" />
-              <span>For Sale</span>
-            </button>
-            <button
-              className={`store-hero__cat-chip${filter === 'rent' ? ' store-hero__cat-chip--active' : ''}`}
-              onClick={() => setFilter('rent')}
-            >
-              <i className="fa-light fa-sharp fa-calendar-days" />
-              <span>For Rent</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Select Filter Dropdowns */}
-      <div style={{ maxWidth: 'var(--max-width)', margin: 'var(--space-6) auto 0', width: '100%', padding: '0 var(--space-6)', display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)' }}>
-        <select 
-          value={status} 
-          onChange={e => setStatus(e.target.value)}
-          className="form-select"
-          style={{ width: 'auto', background: 'var(--bg-2)', border: '1px solid var(--border)', color: 'var(--text-1)', padding: '8px 16px', outline: 'none', fontSize: 'var(--text-xs)', letterSpacing: '0.05em', textTransform: 'uppercase' }}
-        >
-          <option value="all">All Statuses</option>
-          <option value="available">Available Only</option>
-          <option value="out_of_stock">Out of Stock</option>
-          <option value="rented">Rented</option>
-        </select>
-
-        <select 
-          value={sort} 
-          onChange={e => setSort(e.target.value)}
-          className="form-select"
-          style={{ width: 'auto', background: 'var(--bg-2)', border: '1px solid var(--border)', color: 'var(--text-1)', padding: '8px 16px', outline: 'none', fontSize: 'var(--text-xs)', letterSpacing: '0.05em', textTransform: 'uppercase' }}
-        >
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-          <option value="price_asc">Price: Low to High</option>
-          <option value="price_desc">Price: High to Low</option>
-        </select>
+      <div style={{ maxWidth: 'var(--max-width-lg)', margin: 'var(--space-4) auto 0 auto', padding: '0 var(--space-4)' }}>
+        <Breadcrumbs items={[{ label: 'Projects', path: '/project' }]} />
       </div>
 
-      {/* Active Filters Summary */}
-      {hasActiveFilters && (
-        <div className="store-active-filters" style={{ marginTop: 'var(--space-4)' }}>
-          <div className="store-active-filters__inner">
-            <div className="store-active-filters__tags">
-              {search && (
-                <span className="store-active-filters__tag">
-                  Search: "{search}"
-                  <button onClick={() => setSearch('')} aria-label="Remove search filter">
-                    <i className="fa-light fa-xmark" />
-                  </button>
-                </span>
-              )}
-              {filter !== 'all' && (
-                <span className="store-active-filters__tag">
-                  Type: {filter === 'sale' ? 'For Sale' : 'For Rent'}
-                  <button onClick={() => setFilter('all')} aria-label="Remove type filter">
-                    <i className="fa-light fa-xmark" />
-                  </button>
-                </span>
-              )}
-              {status !== 'available' && (
-                <span className="store-active-filters__tag">
-                  Status: {status === 'out_of_stock' ? 'OUT OF STOCK' : status.toUpperCase()}
-                  <button onClick={() => setStatus('all')} aria-label="Remove status filter">
-                    <i className="fa-light fa-xmark" />
-                  </button>
-                </span>
-              )}
-              {sort !== 'newest' && (
-                <span className="store-active-filters__tag">
-                  Sort: {sort.toUpperCase()}
-                  <button onClick={() => setSort('newest')} aria-label="Remove sort filter">
-                    <i className="fa-light fa-xmark" />
-                  </button>
-                </span>
+      {/* Main Layout Container */}
+      <div className="store-layout-container">
+        <div className="store-layout-wrapper">
+          
+          {/* Left Column: Sidebar Filters */}
+          <aside className="store-sidebar">
+            <div className="sidebar-header">
+              <span className="sidebar-title">Filters</span>
+              {hasActiveFilters && (
+                <button className="sidebar-clear-btn" onClick={clearAllFilters}>
+                  Clear All
+                </button>
               )}
             </div>
-            <button className="store-active-filters__clear" onClick={clearAllFilters}>
-              <i className="fa-light fa-xmark" /> Clear all
-            </button>
-          </div>
-        </div>
-      )}
 
-      {/* Main Content */}
-      <main className="store-content" style={{ opacity: loading ? 0.6 : 1, transition: 'opacity 0.2s ease-in-out' }}>
-        {projects.length === 0 ? (
-          <div className="store-empty">
-            <div className="store-empty__icon">
-              <i className="fa-light fa-sharp fa-box-open" />
+            {/* Request Custom Project Action */}
+            <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 'var(--space-4)' }}>
+              <button 
+                className="btn btn-primary" 
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-2)', height: '40px', padding: 0 }}
+                onClick={() => setShowCustomModal(true)}
+                title="Submit a request for a custom engineering design, prototype or code"
+              >
+                <i className="fa-light fa-sharp fa-square-plus" />
+                Request Custom Project
+              </button>
             </div>
-            <h3 className="store-empty__title">No projects found</h3>
-            <p className="store-empty__text">
-              {search
-                ? `No projects match "${search}"`
-                : 'No projects match your current filters'}
-            </p>
-            <button className="btn btn-primary" onClick={clearAllFilters}>
-              <i className="fa-light fa-xmark" /> Clear Filters
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="product-grid">
-              {projects.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(project => {
-                const isAvailable = project.status === 'available';
-                const badgeClass = project.type === 'sale' ? 'new' : 'sale';
-                return (
-                  <article
-                    key={project.id}
-                    className="product-card"
-                    onClick={() => navigate(`/projects/${project.slug || project.id}`)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={e => e.key === 'Enter' && navigate(`/projects/${project.slug || project.id}`)}
-                    aria-label={`View ${project.name}`}
-                  >
-                    {/* Badges */}
-                    <div className="product-card__badges">
-                      <span className={`product-card__badge product-card__badge--${badgeClass}`}>
-                        {project.type === 'sale' ? 'For Sale' : 'For Rent'}
-                      </span>
-                    </div>
 
-                    {/* Image */}
-                    <div className="product-card__image-wrap">
-                      <img
-                        className="product-card__image"
-                        src={project.image_url || '/placeholder.svg'}
-                        alt={project.name}
-                        loading="lazy"
-                        onError={e => { e.target.src = '/placeholder.svg'; }}
-                      />
-                      <div className="product-card__image-overlay">
-                        <span className="product-card__view-btn">
-                          <i className="fa-light fa-sharp fa-arrow-right" />
-                        </span>
-                      </div>
-                    </div>
+            {/* Filter Section: Project Type */}
+            <div className="filter-section">
+              <span className="filter-section-title">Project Type</span>
+              <div className="filter-list">
+                <label className={`filter-row${filter === 'all' ? ' filter-row--active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="project-type"
+                    checked={filter === 'all'}
+                    onChange={() => setFilter('all')}
+                    className="filter-checkbox-input"
+                  />
+                  <span className="filter-checkbox-indicator" />
+                  <span className="filter-label">All Types</span>
+                </label>
+                <label className={`filter-row${filter === 'sale' ? ' filter-row--active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="project-type"
+                    checked={filter === 'sale'}
+                    onChange={() => setFilter('sale')}
+                    className="filter-checkbox-input"
+                  />
+                  <span className="filter-checkbox-indicator" />
+                  <span className="filter-label">For Sale</span>
+                </label>
+                <label className={`filter-row${filter === 'rent' ? ' filter-row--active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="project-type"
+                    checked={filter === 'rent'}
+                    onChange={() => setFilter('rent')}
+                    className="filter-checkbox-input"
+                  />
+                  <span className="filter-checkbox-indicator" />
+                  <span className="filter-label">For Rent</span>
+                </label>
+              </div>
+            </div>
 
-                    {/* Body */}
-                    <div className="product-card__body">
-                      <span className="product-card__category">{project.type.toUpperCase()}</span>
-                      <h3 className="product-card__name">{project.name}</h3>
+            {/* Filter Section: Availability / Status */}
+            <div className="filter-section">
+              <span className="filter-section-title">Availability</span>
+              <div className="filter-list">
+                <label className={`filter-row${status === 'all' ? ' filter-row--active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="project-status"
+                    checked={status === 'all'}
+                    onChange={() => setStatus('all')}
+                    className="filter-checkbox-input"
+                  />
+                  <span className="filter-checkbox-indicator" />
+                  <span className="filter-label">All Statuses</span>
+                </label>
+                <label className={`filter-row${status === 'available' ? ' filter-row--active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="project-status"
+                    checked={status === 'available'}
+                    onChange={() => setStatus('available')}
+                    className="filter-checkbox-input"
+                  />
+                  <span className="filter-checkbox-indicator" />
+                  <span className="filter-label">Available Only</span>
+                </label>
+                <label className={`filter-row${status === 'out_of_stock' ? ' filter-row--active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="project-status"
+                    checked={status === 'out_of_stock'}
+                    onChange={() => setStatus('out_of_stock')}
+                    className="filter-checkbox-input"
+                  />
+                  <span className="filter-checkbox-indicator" />
+                  <span className="filter-label">Out of Stock</span>
+                </label>
+                <label className={`filter-row${status === 'rented' ? ' filter-row--active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="project-status"
+                    checked={status === 'rented'}
+                    onChange={() => setStatus('rented')}
+                    className="filter-checkbox-input"
+                  />
+                  <span className="filter-checkbox-indicator" />
+                  <span className="filter-label">Rented</span>
+                </label>
+              </div>
+            </div>
+          </aside>
 
-                      {/* Stock / Status */}
-                      <div className={`product-card__stock product-card__stock--${isAvailable ? 'in' : 'out'}`}>
-                        <i className={`fa-light fa-sharp fa-${isAvailable ? 'check-circle' : 'xmark-circle'}`} />
-                        {project.status.toUpperCase()}
-                      </div>
-                    </div>
+          {/* Right Column: Main Content Catalog */}
+          <main className="store-main">
+            
+            {/* Title & Search bar row */}
+            <div className="store-main-header">
+              <h1 className="store-main-title">Prebuilt Tech Projects</h1>
+              
+              <div className="store-catalog-search">
+                <i className="fa-light fa-sharp fa-magnifying-glass search-icon" />
+                <input
+                  type="search"
+                  placeholder="Search projects..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="store-catalog-search-input"
+                  aria-label="Search projects"
+                />
+                {search && (
+                  <button onClick={() => setSearch('')} className="search-clear-btn" aria-label="Clear search">
+                    <i className="fa-light fa-sharp fa-xmark" />
+                  </button>
+                )}
+              </div>
+            </div>
 
-                    {/* Footer */}
-                    <div className="product-card__footer">
-                      <div className="product-card__price-group">
-                        <span className="product-card__price">
-                          Rs. {Number(project.price).toLocaleString()}{project.type === 'rent' ? ' / week' : ''}
-                        </span>
-                      </div>
+            {/* Toolbar showing Sort selection and result count */}
+            <div className="store-catalog-toolbar">
+              <span className="store-catalog-count">
+                Showing <strong>{projects.length}</strong> projects
+              </span>
+              
+              <div className="store-catalog-sort">
+                <span className="sort-label">Sort By:</span>
+                <select
+                  className="store-catalog-select"
+                  value={sort}
+                  onChange={e => setSort(e.target.value)}
+                  aria-label="Sort projects"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="price_asc">Price: Low to High</option>
+                  <option value="price_desc">Price: High to Low</option>
+                </select>
+              </div>
+            </div>
 
-                      <button
-                        className="product-card__add-btn"
-                        onClick={() => navigate(`/projects/${project.slug || project.id}`)}
-                      >
-                        <i className="fa-light fa-sharp fa-arrow-right" />
-                        <span>Explore</span>
+            {/* Active Filters tags */}
+            {hasActiveFilters && (
+              <div className="store-active-tags-container">
+                <div className="store-active-tags-list">
+                  {search && (
+                    <span className="active-tag-item">
+                      Search: "{search}"
+                      <button onClick={() => setSearch('')} aria-label="Remove search filter">
+                        <i className="fa-light fa-xmark" />
                       </button>
-                    </div>
-                  </article>
-                );
-              })}
+                    </span>
+                  )}
+                  {filter !== 'all' && (
+                    <span className="active-tag-item">
+                      Type: {filter === 'sale' ? 'For Sale' : 'For Rent'}
+                      <button onClick={() => setFilter('all')} aria-label="Remove type filter">
+                        <i className="fa-light fa-xmark" />
+                      </button>
+                    </span>
+                  )}
+                  {status !== 'all' && (
+                    <span className="active-tag-item">
+                      Status: {status === 'out_of_stock' ? 'OUT OF STOCK' : status.toUpperCase()}
+                      <button onClick={() => setStatus('all')} aria-label="Remove status filter">
+                        <i className="fa-light fa-xmark" />
+                      </button>
+                    </span>
+                  )}
+                  {sort !== 'newest' && (
+                    <span className="active-tag-item">
+                      Sort: {sort.toUpperCase()}
+                      <button onClick={() => setSort('newest')} aria-label="Remove sort filter">
+                        <i className="fa-light fa-xmark" />
+                      </button>
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Product display */}
+            <div className="store-catalog-body" style={{ opacity: loading ? 0.6 : 1, transition: 'opacity 0.2s ease-in-out' }}>
+              {projects.length === 0 ? (
+                <div className="store-empty">
+                  <div className="store-empty__icon">
+                    <i className="fa-light fa-sharp fa-box-open" />
+                  </div>
+                  <h3 className="store-empty__title">No projects found</h3>
+                  <p className="store-empty__text">
+                    {search
+                      ? `No projects match "${search}"`
+                      : 'No projects match your current filters'}
+                  </p>
+                  <button className="btn btn-primary" onClick={clearAllFilters}>
+                    <i className="fa-light fa-xmark" /> Clear Filters
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="product-grid">
+                    {projects.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(project => {
+                      const isAvailable = project.status === 'available';
+                      const badgeClass = project.type === 'sale' ? 'new' : 'sale';
+                      return (
+                        <article
+                          key={project.id}
+                          className="product-card"
+                          onClick={() => navigate(`/projects/${project.slug || project.id}`)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={e => e.key === 'Enter' && navigate(`/projects/${project.slug || project.id}`)}
+                          aria-label={`View ${project.name}`}
+                        >
+                          {/* Badges */}
+                          <div className="product-card__badges">
+                            <span className={`product-card__badge product-card__badge--${badgeClass}`}>
+                              {project.type === 'sale' ? 'For Sale' : 'For Rent'}
+                            </span>
+                          </div>
+
+                          {/* Image */}
+                          <div className="product-card__image-wrap">
+                            <img
+                              className="product-card__image"
+                              src={project.image_url || '/placeholder.svg'}
+                              alt={project.name}
+                              loading="lazy"
+                              onError={e => { e.target.src = '/placeholder.svg'; }}
+                            />
+                            <div className="product-card__image-overlay">
+                              <span className="product-card__view-btn">
+                                <i className="fa-light fa-sharp fa-arrow-right" />
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Body */}
+                          <div className="product-card__body">
+                            <span className="product-card__category">{project.type.toUpperCase()}</span>
+                            <h3 className="product-card__name">{project.name}</h3>
+
+                            {/* Stock / Status */}
+                            <div className={`product-card__stock product-card__stock--${isAvailable ? 'in' : 'out'}`}>
+                              <i className={`fa-light fa-sharp fa-${isAvailable ? 'check-circle' : 'xmark-circle'}`} />
+                              {project.status.toUpperCase()}
+                            </div>
+                          </div>
+
+                          {/* Footer */}
+                          <div className="product-card__footer">
+                            <div className="product-card__price-group">
+                              <span className="product-card__price">
+                                Rs. {Number(project.price).toLocaleString()}{project.type === 'rent' ? ' / week' : ''}
+                              </span>
+                            </div>
+
+                            <button
+                              className="product-card__add-btn"
+                              onClick={() => navigate(`/projects/${project.slug || project.id}`)}
+                            >
+                              <i className="fa-light fa-sharp fa-arrow-right" />
+                              <span>Explore</span>
+                            </button>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                  <Pagination 
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(projects.length / itemsPerPage)}
+                    onPageChange={setCurrentPage}
+                  />
+                </>
+              )}
             </div>
-            <Pagination 
-              currentPage={currentPage}
-              totalPages={Math.ceil(projects.length / itemsPerPage)}
-              onPageChange={setCurrentPage}
-            />
-          </>
-        )}
-      </main>
+          </main>
+        </div>
+      </div>
 
       <Footer />
 
