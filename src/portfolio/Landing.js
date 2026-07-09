@@ -330,6 +330,7 @@ export default function Landing() {
                   desc: 'Electronics, gadgets & components delivered across Nepal.',
                   link: '/store',
                   accent: '#6366f1',
+                  accentRgb: '99, 102, 241',
                   delay: 0,
                 },
                 {
@@ -338,6 +339,7 @@ export default function Landing() {
                   desc: 'Professional FDM & resin printing for prototypes & parts.',
                   link: '/services/3d-printing',
                   accent: '#06b6d4',
+                  accentRgb: '6, 182, 212',
                   delay: 1,
                 },
                 {
@@ -346,6 +348,7 @@ export default function Landing() {
                   desc: 'Modern React, Next.js websites & full-stack applications.',
                   link: '/services/web-development',
                   accent: '#8b5cf6',
+                  accentRgb: '139, 92, 246',
                   delay: 2,
                 },
                 {
@@ -354,6 +357,7 @@ export default function Landing() {
                   desc: 'Custom IoT, embedded systems & software consulting.',
                   link: '/project',
                   accent: '#f59e0b',
+                  accentRgb: '245, 158, 11',
                   delay: 3,
                 },
               ].map((card) => (
@@ -361,7 +365,11 @@ export default function Landing() {
                   key={card.title}
                   to={card.link}
                   className="hero-card"
-                  style={{ '--card-accent': card.accent, '--card-delay': card.delay }}
+                  style={{ 
+                    '--card-accent': card.accent, 
+                    '--card-accent-rgb': card.accentRgb, 
+                    '--card-delay': card.delay 
+                  }}
                   title={`Explore ${card.title}`}
                   onMouseMove={tilt.onMouseMove}
                   onMouseLeave={tilt.onMouseLeave}
