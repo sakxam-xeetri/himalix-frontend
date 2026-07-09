@@ -2,29 +2,47 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
-const Field = ({ id, label, icon, name, type = 'text', placeholder, autoComplete, form, handleChange, loading, fieldErrors }) => (
-  <div className={`form-group${fieldErrors[name] ? ' form-group--error' : ''}`}>
-    <label htmlFor={id} className="form-label">
-      <i className={`fa-light fa-sharp fa-${icon}`} /> {label}
-    </label>
-    <input
-      id={id}
-      name={name}
-      type={type}
-      className="form-input"
-      placeholder={placeholder}
-      value={form[name]}
-      onChange={handleChange}
-      autoComplete={autoComplete}
-      disabled={loading}
-    />
-    {fieldErrors[name] && (
-      <span className="form-error">
-        <i className="fa-light fa-sharp fa-triangle-exclamation" /> {fieldErrors[name]}
-      </span>
-    )}
-  </div>
-);
+const Field = ({ id, label, icon, name, type = 'text', placeholder, autoComplete, form, handleChange, loading, fieldErrors }) => {
+  const [showVal, setShowVal] = useState(false);
+  const isPassword = type === 'password';
+  const actualType = isPassword ? (showVal ? 'text' : 'password') : type;
+  
+  return (
+    <div className={`form-group${fieldErrors[name] ? ' form-group--error' : ''}`}>
+      <label htmlFor={id} className="form-label">{label}</label>
+      <div className={`auth-input-wrapper${isPassword ? ' auth-input-wrapper--password' : ''}`}>
+        <input
+          id={id}
+          name={name}
+          type={actualType}
+          className="form-input"
+          placeholder={placeholder}
+          value={form[name]}
+          onChange={handleChange}
+          autoComplete={autoComplete}
+          disabled={loading}
+        />
+        <i className={`fa-light fa-sharp fa-${icon} auth-input-icon`} />
+        {isPassword && (
+          <button
+            type="button"
+            className="auth-password-toggle"
+            onClick={() => setShowVal(!showVal)}
+            disabled={loading}
+            tabIndex="-1"
+          >
+            <i className={`fa-light fa-sharp fa-eye${showVal ? '-slash' : ''}`} />
+          </button>
+        )}
+      </div>
+      {fieldErrors[name] && (
+        <span className="form-error">
+          <i className="fa-light fa-sharp fa-triangle-exclamation" /> {fieldErrors[name]}
+        </span>
+      )}
+    </div>
+  );
+};
 
 export default function Signup() {
   const { login, user, systemConfig } = useAuth();
@@ -43,6 +61,14 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+  };
 
   useEffect(() => {
     if (user) navigate(from, { replace: true });
@@ -148,11 +174,16 @@ export default function Signup() {
   return (
     <div className="auth-page">
       {/* Left branding panel */}
-      <aside className="auth-panel" aria-hidden="true">
+      <aside className="auth-panel" aria-hidden="true" onMouseMove={handleMouseMove}>
         <div className="auth-panel__grid" />
+        <div className="auth-panel__glow" />
         <div className="auth-panel__content">
           <div className="auth-panel__logo">
-            HIMALIX <span style={{ color: 'var(--accent)' }}>LABS</span>
+            <span>HIMALIX <span style={{ color: 'var(--accent)' }}>LABS</span></span>
+            <div className="auth-status-badge">
+              <span className="auth-status-dot" />
+              SYS ACTIVE
+            </div>
           </div>
           <div className="auth-panel__tagline">
             <h2>Join Nepal's technology community.</h2>
@@ -178,68 +209,74 @@ export default function Signup() {
 
       {/* Right form */}
       <main className="auth-form-wrap">
-        <div className="auth-form-box">
-          <div className="auth-form-box__header">
-            <div className="auth-form-box__eyebrow">Get started</div>
-            <h1 className="auth-form-box__title">Create account</h1>
-            <p className="auth-form-box__subtitle">Free. Takes 30 seconds.</p>
-          </div>
+        <div className="auth-card">
+          <div className="auth-form-box">
+            <div className="auth-fade-in">
+              <div className="auth-form-box__header">
+                <div className="auth-form-box__eyebrow">Get started</div>
+                <h1 className="auth-form-box__title">Create account</h1>
+                <p className="auth-form-box__subtitle">Free. Takes 30 seconds.</p>
+              </div>
 
-          {error && (
-            <div className="alert alert-danger" role="alert" style={{ marginBottom: 'var(--space-5)' }}>
-              <i className="fa-light fa-sharp fa-circle-exclamation" /> {error}
+              {error && (
+                <div className="alert alert-danger" role="alert">
+                  <i className="fa-light fa-sharp fa-circle-exclamation" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <form className="auth-form" onSubmit={handleSubmit} noValidate>
+                {/* Google */}
+                {systemConfig?.googleAuthEnabled && systemConfig?.googleClientId && (
+                  <>
+                    <div id="google-btn-signup" style={{ width: '100%' }} />
+                    <div className="auth-separator">or</div>
+                  </>
+                )}
+
+                <Field id="signup-name"     label="Full Name"  icon="user"     name="name"     placeholder="Your name"      autoComplete="name" form={form} handleChange={handleChange} loading={loading} fieldErrors={fieldErrors} />
+                <Field id="signup-email"    label="Email"      icon="envelope" name="email"    type="email" placeholder="you@example.com" autoComplete="email" form={form} handleChange={handleChange} loading={loading} fieldErrors={fieldErrors} />
+                <Field id="signup-password" label="Password"   icon="lock"     name="password" type="password" placeholder="Min 6 characters" autoComplete="new-password" form={form} handleChange={handleChange} loading={loading} fieldErrors={fieldErrors} />
+                <Field id="signup-confirm"  label="Confirm Password" icon="lock-check" name="confirm" type="password" placeholder="Repeat password" autoComplete="new-password" form={form} handleChange={handleChange} loading={loading} fieldErrors={fieldErrors} />
+
+                {/* Optional referral */}
+                <div className="form-group">
+                  <label htmlFor="signup-referral" className="form-label">Referral Code <span style={{ color: 'var(--text-3)', fontWeight: 400, marginLeft: 4 }}>(optional)</span></label>
+                  <div className="auth-input-wrapper">
+                    <input
+                      id="signup-referral"
+                      name="referral_code"
+                      type="text"
+                      className="form-input"
+                      placeholder="Enter referral code"
+                      value={form.referral_code}
+                      onChange={handleChange}
+                      disabled={loading}
+                    />
+                    <i className="fa-light fa-sharp fa-gift auth-input-icon" />
+                  </div>
+                  <span className="auth-referral-note">
+                    <i className="fa-light fa-sharp fa-circle-info" style={{ color: 'var(--accent)' }} /> You and your referrer each earn Rs. 100 in wallet credits
+                  </span>
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-full btn-lg auth-submit-btn"
+                  disabled={loading}
+                  aria-busy={loading}
+                >
+                  {loading
+                    ? <><div className="spinner" style={{ width: 16, height: 16 }} /> Creating account…</>
+                    : <><i className="fa-light fa-sharp fa-user-plus" /> Create Account</>
+                  }
+                </button>
+              </form>
+
+              <div className="auth-switch">
+                Already have an account? <Link to="/signin">Sign in</Link>
+              </div>
             </div>
-          )}
-
-          <form className="auth-form" onSubmit={handleSubmit} noValidate>
-            {/* Google */}
-            {systemConfig?.googleAuthEnabled && systemConfig?.googleClientId && (
-              <>
-                <div id="google-btn-signup" style={{ width: '100%' }} />
-                <div className="auth-separator">or</div>
-              </>
-            )}
-
-            <Field id="signup-name"     label="Full Name"  icon="user"     name="name"     placeholder="Your name"      autoComplete="name" form={form} handleChange={handleChange} loading={loading} fieldErrors={fieldErrors} />
-            <Field id="signup-email"    label="Email"      icon="envelope" name="email"    type="email" placeholder="you@example.com" autoComplete="email" form={form} handleChange={handleChange} loading={loading} fieldErrors={fieldErrors} />
-            <Field id="signup-password" label="Password"   icon="lock"     name="password" type="password" placeholder="Min 6 characters" autoComplete="new-password" form={form} handleChange={handleChange} loading={loading} fieldErrors={fieldErrors} />
-            <Field id="signup-confirm"  label="Confirm Password" icon="lock-check" name="confirm" type="password" placeholder="Repeat password" autoComplete="new-password" form={form} handleChange={handleChange} loading={loading} fieldErrors={fieldErrors} />
-
-            {/* Optional referral */}
-            <div className="form-group">
-              <label htmlFor="signup-referral" className="form-label">
-                <i className="fa-light fa-sharp fa-gift" /> Referral Code <span style={{ color: 'var(--text-3)', fontWeight: 400, marginLeft: 4 }}>(optional)</span>
-              </label>
-              <input
-                id="signup-referral"
-                name="referral_code"
-                type="text"
-                className="form-input"
-                placeholder="Enter referral code"
-                value={form.referral_code}
-                onChange={handleChange}
-                disabled={loading}
-              />
-              <span className="auth-referral-note">
-                <i className="fa-light fa-sharp fa-circle-info" style={{ color: 'var(--accent)' }} /> You and your referrer each earn Rs. 100 in wallet credits
-              </span>
-            </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary btn-full btn-lg"
-              disabled={loading}
-              aria-busy={loading}
-            >
-              {loading
-                ? <><div className="spinner" style={{ width: 16, height: 16 }} /> Creating account…</>
-                : <><i className="fa-light fa-sharp fa-user-plus" /> Create Account</>
-              }
-            </button>
-          </form>
-
-          <div className="auth-switch">
-            Already have an account? <Link to="/signin">Sign in</Link>
           </div>
         </div>
       </main>

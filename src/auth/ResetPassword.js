@@ -11,6 +11,16 @@ export default function ResetPassword() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,11 +72,16 @@ export default function ResetPassword() {
   return (
     <div className="auth-page">
       {/* Left branding panel */}
-      <aside className="auth-panel" aria-hidden="true">
+      <aside className="auth-panel" aria-hidden="true" onMouseMove={handleMouseMove}>
         <div className="auth-panel__grid" />
+        <div className="auth-panel__glow" />
         <div className="auth-panel__content">
           <div className="auth-panel__logo">
-            HIMALIX <span style={{ color: 'var(--accent)' }}>LABS</span>
+            <span>HIMALIX <span style={{ color: 'var(--accent)' }}>LABS</span></span>
+            <div className="auth-status-badge">
+              <span className="auth-status-dot" />
+              SYS ACTIVE
+            </div>
           </div>
           <div className="auth-panel__tagline">
             <h2>Nepal's technology access center.</h2>
@@ -77,79 +92,103 @@ export default function ResetPassword() {
 
       {/* Right form panel */}
       <main className="auth-form-wrap">
-        <div className="auth-form-box">
-          <div className="auth-form-box__header">
-            <div className="auth-form-box__eyebrow">Secure Account</div>
-            <h1 className="auth-form-box__title">Create New Password</h1>
-            <p className="auth-form-box__subtitle">Enter your new secure password below</p>
-          </div>
-
-          {error && (
-            <div className="alert alert-danger" role="alert" style={{ marginBottom: 'var(--space-5)' }}>
-              <i className="fa-light fa-sharp fa-circle-exclamation" />
-              {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="alert alert-success" role="alert" style={{ marginBottom: 'var(--space-5)', color: '#4caf50', borderColor: 'rgba(76, 175, 80, 0.2)', backgroundColor: 'rgba(76, 175, 80, 0.05)' }}>
-              <i className="fa-light fa-sharp fa-circle-check" style={{ marginRight: '8px' }} />
-              {success}
-            </div>
-          )}
-
-          {!success && (
-            <form className="auth-form" onSubmit={handleSubmit} noValidate>
-              {/* New Password */}
-              <div className="form-group">
-                <label htmlFor="reset-password-input" className="form-label">
-                  <i className="fa-light fa-sharp fa-lock" /> New Password
-                </label>
-                <input
-                  id="reset-password-input"
-                  type="password"
-                  className="form-input"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={loading}
-                />
+        <div className="auth-card">
+          <div className="auth-form-box">
+            <div className="auth-fade-in">
+              <div className="auth-form-box__header">
+                <div className="auth-form-box__eyebrow">Secure Account</div>
+                <h1 className="auth-form-box__title">Create New Password</h1>
+                <p className="auth-form-box__subtitle">Enter your new secure password below</p>
               </div>
 
-              {/* Confirm Password */}
-              <div className="form-group">
-                <label htmlFor="reset-confirm-password" className="form-label">
-                  <i className="fa-light fa-sharp fa-lock" /> Confirm Password
-                </label>
-                <input
-                  id="reset-confirm-password"
-                  type="password"
-                  className="form-input"
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  disabled={loading}
-                />
+              {error && (
+                <div className="alert alert-danger" role="alert">
+                  <i className="fa-light fa-sharp fa-circle-exclamation" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {success && (
+                <div className="alert alert-success" role="alert">
+                  <i className="fa-light fa-sharp fa-circle-check" />
+                  <span>{success}</span>
+                </div>
+              )}
+
+              {!success && (
+                <form className="auth-form" onSubmit={handleSubmit} noValidate>
+                  {/* New Password */}
+                  <div className="form-group">
+                    <label htmlFor="reset-password-input" className="form-label">New Password</label>
+                    <div className="auth-input-wrapper auth-input-wrapper--password">
+                      <input
+                        id="reset-password-input"
+                        type={showPassword ? "text" : "password"}
+                        className="form-input"
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        disabled={loading}
+                      />
+                      <i className="fa-light fa-sharp fa-lock auth-input-icon" />
+                      <button
+                        type="button"
+                        className="auth-password-toggle"
+                        onClick={() => setShowPassword(!showPassword)}
+                        disabled={loading}
+                        tabIndex="-1"
+                      >
+                        <i className={`fa-light fa-sharp fa-eye${showPassword ? '-slash' : ''}`} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div className="form-group">
+                    <label htmlFor="reset-confirm-password" className="form-label">Confirm Password</label>
+                    <div className="auth-input-wrapper auth-input-wrapper--password">
+                      <input
+                        id="reset-confirm-password"
+                        type={showConfirmPassword ? "text" : "password"}
+                        className="form-input"
+                        placeholder="••••••••"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        disabled={loading}
+                      />
+                      <i className="fa-light fa-sharp fa-lock auth-input-icon" />
+                      <button
+                        type="button"
+                        className="auth-password-toggle"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        disabled={loading}
+                        tabIndex="-1"
+                      >
+                        <i className={`fa-light fa-sharp fa-eye${showConfirmPassword ? '-slash' : ''}`} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-full btn-lg auth-submit-btn"
+                    disabled={loading}
+                    aria-busy={loading}
+                  >
+                    {loading
+                      ? <><div className="spinner" style={{ width: 16, height: 16 }} /> Resetting…</>
+                      : <><i className="fa-light fa-sharp fa-check" /> Update Password</>
+                    }
+                  </button>
+                </form>
+              )}
+
+              <div className="auth-switch">
+                Remembered your password? <Link to="/signin">Sign In</Link>
               </div>
-
-              <button
-                type="submit"
-                className="btn btn-primary btn-full btn-lg"
-                disabled={loading}
-                aria-busy={loading}
-              >
-                {loading
-                  ? <><div className="spinner" style={{ width: 16, height: 16 }} /> Resetting…</>
-                  : <><i className="fa-light fa-sharp fa-check" /> Update Password</>
-                }
-              </button>
-            </form>
-          )}
-
-          <div className="auth-switch">
-            Remembered your password? <Link to="/signin">Sign In</Link>
+            </div>
           </div>
         </div>
       </main>
