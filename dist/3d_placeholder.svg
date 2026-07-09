@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <!-- Accent Gradient -->
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+    <!-- Grid Pattern -->
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#312e81" stroke-width="0.5" opacity="0.4" />
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="url(#bgGrad)" />
+  <rect width="100%" height="100%" fill="url(#grid)" />
+  
+  <!-- Stylized Decorative Circle -->
+  <circle cx="200" cy="180" r="80" fill="none" stroke="url(#accentGrad)" stroke-width="1" stroke-dasharray="6 6" opacity="0.2" />
+  
+  <!-- 3D Printer / Cube Icon -->
+  <g transform="translate(140, 120)" stroke="url(#accentGrad)" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Outer Frame of 3D Printer -->
+    <path d="M 10 10 L 110 10 L 110 110 L 10 110 Z" opacity="0.3" stroke-dasharray="4 4" />
+    <!-- 3D Cube representation -->
+    <path d="M 60 30 L 100 50 L 100 90 L 60 110 L 20 90 L 20 50 Z" />
+    <path d="M 60 30 L 60 110" />
+    <path d="M 20 50 L 60 70 L 100 50" />
+    <!-- Extruder / Nozzle -->
+    <path d="M 60 5 Q 60 20 60 25" stroke="#f59e0b" stroke-width="3" />
+    <polygon points="57,25 63,25 60,30" fill="#f59e0b" stroke="#f59e0b" />
+    <circle cx="60" cy="30" r="2" fill="#ef4444" stroke="none" />
+  </g>
+  
+  <!-- Text Info -->
+  <text x="200" y="270" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#a5b4fc" letter-spacing="1.5" text-anchor="middle">
+    3D PRINT SERVICE
+  </text>
+  <text x="200" y="290" font-family="system-ui, -apple-system, sans-serif" font-size="9" fill="#6366f1" letter-spacing="1" text-anchor="middle">
+    HIMALIX LABS
+  </text>
+</svg>

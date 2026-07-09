@@ -85,9 +85,9 @@ export default function ProductCard({ product, featured = false }) {
 
       {/* Body */}
       <div className="product-card__body">
-        {category && (
-          <span className="product-card__category">{category}</span>
-        )}
+        <span className="product-card__category">
+          {category || <>&nbsp;</>}
+        </span>
         <h3 className="product-card__name">
           <Link to={`/products/${product.slug || id}`}>
             {name}

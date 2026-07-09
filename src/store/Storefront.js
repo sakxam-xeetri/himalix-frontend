@@ -292,6 +292,56 @@ export default function Storefront() {
         </section>
       )}
 
+      {/* Toolbar */}
+      <div className="store-toolbar">
+        <div className="store-toolbar__inner">
+          <div className="store-toolbar__left">
+            <span className="store-toolbar__count">
+              Showing {filtered.length} products
+            </span>
+          </div>
+          <div className="store-toolbar__right">
+            <select
+              className="store-toolbar__select"
+              value={sort}
+              onChange={e => setSort(e.target.value)}
+              aria-label="Sort products"
+            >
+              {SORT_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+
+            <select
+              className="store-toolbar__select"
+              value={stockFilter}
+              onChange={e => setStockFilter(e.target.value)}
+              aria-label="Filter by stock"
+            >
+              {STOCK_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+
+            <select
+              className="store-toolbar__select"
+              value={priceRange}
+              onChange={e => setPriceRange(e.target.value)}
+              aria-label="Filter by price range"
+            >
+              {PRICE_RANGES.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
 
       {/* Active Filters Summary */}
       {hasActiveFilters && (
