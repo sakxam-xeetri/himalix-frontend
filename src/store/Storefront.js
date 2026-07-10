@@ -15,23 +15,6 @@ const SORT_OPTIONS = [
   { value: 'name_asc', label: 'Name A-Z' },
 ];
 
-const PREDEFINED_CATEGORIES = [
-  'Development Boards',
-  'Sensors',
-  'Electronic Components',
-  'ICs',
-  'Modules',
-  'Displays',
-  'Motors & Robotics',
-  'Batteries & Power',
-  'Communication',
-  'Breadboards & Prototyping',
-  'PCB & Soldering',
-  'Connectors & Cables',
-  'Tools & Testing',
-  'Educational Kits',
-  'Accessories'
-];
 
 const mapCategory = (dbCategory) => {
   if (!dbCategory) return 'Accessories';
@@ -159,12 +142,14 @@ export default function Storefront() {
   }, []);
 
   const categories = useMemo(() => {
-    return PREDEFINED_CATEGORIES;
-  }, []);
+    const uniqueRaw = new Set(products.map(p => p.category).filter(Boolean));
+    const uniqueMapped = new Set([...uniqueRaw].map(cat => mapCategory(cat)));
+    return [...uniqueMapped].sort((a, b) => a.localeCompare(b));
+  }, [products]);
 
   const categoryCounts = useMemo(() => {
     const counts = {};
-    PREDEFINED_CATEGORIES.forEach(cat => {
+    categories.forEach(cat => {
       counts[cat] = 0;
     });
     products.forEach(p => {
@@ -172,13 +157,13 @@ export default function Storefront() {
       counts[mapped] = (counts[mapped] || 0) + 1;
     });
     return counts;
-  }, [products]);
+  }, [products, categories]);
 
   const filteredCategories = useMemo(() => {
-    if (!categorySearch.trim()) return PREDEFINED_CATEGORIES;
+    if (!categorySearch.trim()) return categories;
     const q = categorySearch.toLowerCase();
-    return PREDEFINED_CATEGORIES.filter(cat => cat.toLowerCase().includes(q));
-  }, [categorySearch]);
+    return categories.filter(cat => cat.toLowerCase().includes(q));
+  }, [categories, categorySearch]);
 
   const featuredProducts = useMemo(() => {
     return products
