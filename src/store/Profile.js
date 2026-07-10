@@ -1464,7 +1464,7 @@ export default function Profile() {
                             >
                               <option value="Store">Store Purchases</option>
                               <option value="3D Printing">3D Printing Service</option>
-                              <option value="Web Agency">Web Software Project</option>
+                              <option value="Web Agency">Custom Project</option>
                               <option value="Wallet">Wallet & Referral Credits</option>
                               <option value="Account">Account Issues</option>
                               <option value="Other">Other General Inquiries</option>
