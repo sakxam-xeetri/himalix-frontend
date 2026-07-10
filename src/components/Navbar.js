@@ -12,7 +12,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { locale, t, changeLanguage } = useLanguage();
+  const { t } = useLanguage();
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -255,15 +255,6 @@ export default function Navbar() {
             <i className="fa-light fa-sharp fa-bag-shopping" />
             {itemCount > 0 && <span className="global-nav__cart-badge">{itemCount}</span>}
           </Link>
-
-          {/* Language Selector */}
-          <button 
-            onClick={() => changeLanguage(locale === 'en' ? 'ne' : 'en')} 
-            className="global-nav__lang-btn" 
-            title="Toggle language"
-          >
-            {locale === 'en' ? 'ने' : 'EN'}
-          </button>
 
           <button onClick={toggleTheme} className="global-nav__theme-btn" title="Toggle theme">
             <i className={`fa-light fa-sharp fa-${theme === 'dark' ? 'sun' : 'moon'}`} />

@@ -111,10 +111,6 @@ export default function VerifyEmail() {
         <div className="auth-panel__content">
           <div className="auth-panel__logo">
             <span>HIMALIX <span style={{ color: 'var(--accent)' }}>LABS</span></span>
-            <div className="auth-status-badge">
-              <span className="auth-status-dot" />
-              SYS ACTIVE
-            </div>
           </div>
           <div className="auth-panel__tagline">
             <h2>Account Security Verification.</h2>
