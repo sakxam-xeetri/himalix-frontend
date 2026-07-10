@@ -230,8 +230,6 @@ export default function Landing() {
           {/* LEFT — Copy */}
           <div className="hero__left">
             <div className="hero__eyebrow">
-              <span className="hero__eyebrow-dot" />
-              <i className="fa-light fa-sharp fa-location-dot" />
               Kathmandu, Nepal
             </div>
             <h1 id="hero-title" className="hero__title">
