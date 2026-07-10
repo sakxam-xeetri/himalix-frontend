@@ -1,0 +1,214 @@
+[
+  {
+    "id": 1,
+    "project_name": "IoT Smart Agriculture System",
+    "slug": "iot-smart-agriculture-system",
+    "short_description": "An automated irrigation and soil monitoring system powered by ESP32 and cellular IoT.",
+    "full_description": "A complete hardware-software prototype designed to monitor soil moisture, ambient temperature, and humidity, and automate water pump controls. Features Web Dashboard integration for real-time tracking, SMS notifications, and battery-powered low-power optimization. Ideal for smart greenhouse farming in Nepal.",
+    "features": [
+      "Real-time Soil Moisture Sensing",
+      "Automated Water Pump Controller",
+      "Mobile App Dashboard Integration",
+      "Solar Charging & Low Power Mode"
+    ],
+    "technologies_used": [
+      "ESP32",
+      "C++ (Arduino)",
+      "React.js",
+      "Node.js",
+      "Firebase",
+      "LoRaWAN"
+    ],
+    "category": "IoT",
+    "project_status": "Completed",
+    "starting_price": 15500,
+    "primary_image": "images/projects/smart-agriculture-cover.jpg",
+    "gallery_images": [
+      "images/projects/smart-agriculture-1.jpg",
+      "images/projects/smart-agriculture-2.jpg"
+    ],
+    "live_demo_url": "https://demo.himalixlabs.tech/smart-farm",
+    "github_repository": "https://github.com/himalixlabs/iot-smart-farm",
+    "client_name": "Kathmandu AgriTech Pvt. Ltd.",
+    "completion_date": "2025-11-12",
+    "featured_project": true,
+    "active_status": true,
+    "name": "IoT Smart Agriculture System",
+    "description": "A complete hardware-software prototype designed to monitor soil moisture, ambient temperature, and humidity, and automate water pump controls. Features Web Dashboard integration for real-time tracking, SMS notifications, and battery-powered low-power optimization. Ideal for smart greenhouse farming in Nepal.",
+    "technologies": [
+      "ESP32",
+      "C++ (Arduino)",
+      "React.js",
+      "Node.js",
+      "Firebase",
+      "LoRaWAN"
+    ],
+    "image_url": "images/projects/smart-agriculture-cover.jpg",
+    "image_urls": [
+      "images/projects/smart-agriculture-1.jpg",
+      "images/projects/smart-agriculture-2.jpg"
+    ],
+    "offer_type": "sale",
+    "price": 15500,
+    "stock_quantity": 1,
+    "status": "available",
+    "is_active": 1,
+    "is_featured": 1
+  },
+  {
+    "id": 2,
+    "project_name": "Automated Warehouse AGV Chassis",
+    "slug": "automated-warehouse-agv-chassis",
+    "short_description": "A heavy-duty differential drive robot chassis designed for automated guided vehicle (AGV) applications.",
+    "full_description": "A high-performance robotic platform using dual-channel BTS7960 motor drivers, high-torque encoder motors, and a TCRT5000 line-tracking array. Suitable for warehouse logistics research, line-following challenges, and autonomous navigation development with ROS. Features CNC-milled aluminum brackets and 3D printed sensor mounts.",
+    "features": [
+      "Differential Drive Chassis",
+      "Encoder Motor Feedback",
+      "High-Current BTS7960 Driver Integration",
+      "Lidar and Camera Mounting Plates"
+    ],
+    "technologies_used": [
+      "C++",
+      "ROS2",
+      "Python",
+      "SolidWorks (CAD)",
+      "Raspberry Pi 4",
+      "STM32"
+    ],
+    "category": "Robotics",
+    "project_status": "Ongoing",
+    "starting_price": 24900,
+    "primary_image": "images/projects/warehouse-robot-cover.jpg",
+    "gallery_images": [
+      "images/projects/warehouse-robot-1.jpg"
+    ],
+    "live_demo_url": "",
+    "github_repository": "https://github.com/himalixlabs/agv-chassis",
+    "client_name": "Nepal Logistics Labs",
+    "completion_date": "2026-02-15",
+    "featured_project": true,
+    "active_status": true,
+    "name": "Automated Warehouse AGV Chassis",
+    "description": "A high-performance robotic platform using dual-channel BTS7960 motor drivers, high-torque encoder motors, and a TCRT5000 line-tracking array. Suitable for warehouse logistics research, line-following challenges, and autonomous navigation development with ROS. Features CNC-milled aluminum brackets and 3D printed sensor mounts.",
+    "technologies": [
+      "C++",
+      "ROS2",
+      "Python",
+      "SolidWorks (CAD)",
+      "Raspberry Pi 4",
+      "STM32"
+    ],
+    "image_url": "images/projects/warehouse-robot-cover.jpg",
+    "image_urls": [
+      "images/projects/warehouse-robot-1.jpg"
+    ],
+    "offer_type": "rent",
+    "price": 3500,
+    "stock_quantity": 2,
+    "status": "available",
+    "is_active": 1,
+    "is_featured": 1
+  },
+  {
+    "id": 3,
+    "project_name": "AI-Powered Object Sorting Robotic Arm",
+    "slug": "ai-powered-object-sorting-robotic-arm",
+    "short_description": "A robotic arm with computer vision to sort objects based on color, shape, or size.",
+    "full_description": "An advanced automated sorting system utilizing an OpenCV-enabled camera stream and a 4-DOF servo arm. The AI model runs edge inference on a Raspberry Pi 4 to identify objects, classify them in real-time, and coordinate arm movements to deposit them in target bins. Ideal for industrial assembly lines and academic research.",
+    "features": [
+      "Real-time Object Detection & Segmentation",
+      "4-DOF Smooth Robotic Control",
+      "Edge AI TensorFlow Lite Inference",
+      "Custom 3D-Printed Grippers"
+    ],
+    "technologies_used": [
+      "Python",
+      "OpenCV",
+      "TensorFlow Lite",
+      "Raspberry Pi 4",
+      "PCA9685 Servo Driver"
+    ],
+    "category": "AI & Robotics",
+    "project_status": "Planned",
+    "starting_price": 34999,
+    "primary_image": "images/projects/sorting-arm-cover.jpg",
+    "gallery_images": [],
+    "live_demo_url": "",
+    "github_repository": "",
+    "client_name": "Himalix Labs Internal R&D",
+    "completion_date": "",
+    "featured_project": false,
+    "active_status": true,
+    "name": "AI-Powered Object Sorting Robotic Arm",
+    "description": "An advanced automated sorting system utilizing an OpenCV-enabled camera stream and a 4-DOF servo arm. The AI model runs edge inference on a Raspberry Pi 4 to identify objects, classify them in real-time, and coordinate arm movements to deposit them in target bins. Ideal for industrial assembly lines and academic research.",
+    "technologies": [
+      "Python",
+      "OpenCV",
+      "TensorFlow Lite",
+      "Raspberry Pi 4",
+      "PCA9685 Servo Driver"
+    ],
+    "image_url": "images/projects/sorting-arm-cover.jpg",
+    "image_urls": [],
+    "offer_type": "sale",
+    "price": 34999,
+    "stock_quantity": 0,
+    "status": "out_of_stock",
+    "is_active": 1,
+    "is_featured": 0
+  },
+  {
+    "id": 4,
+    "project_name": "Smart Weather Station & Alert System",
+    "slug": "smart-weather-station-alert-system",
+    "short_description": "A low-power weather station with real-time cloud data logging and emergency warnings.",
+    "full_description": "A solar-powered weather station that monitors rainfall, wind speed, wind direction, temperature, barometric pressure, and altitude. Uses ESP32 to publish data via MQTT to a central dashboard. Includes threshold alerts that send push notifications and emails when potential storm or flood patterns are detected.",
+    "features": [
+      "High Precision Meteorological Sensors",
+      "Solar Charging with LiPo Protection",
+      "MQTT Cloud Data Logging",
+      "Emergency Weather Alert Pipeline"
+    ],
+    "technologies_used": [
+      "ESP32",
+      "MicroPython",
+      "Adafruit IO",
+      "Node-RED",
+      "MQTT",
+      "BME280"
+    ],
+    "category": "IoT",
+    "project_status": "Completed",
+    "starting_price": 18500,
+    "primary_image": "images/projects/weather-station-cover.jpg",
+    "gallery_images": [
+      "images/projects/weather-station-1.jpg"
+    ],
+    "live_demo_url": "https://io.adafruit.com/himalix/dashboards/weather",
+    "github_repository": "https://github.com/himalixlabs/weather-esp32",
+    "client_name": "ICIMOD Nepal",
+    "completion_date": "2025-08-20",
+    "featured_project": false,
+    "active_status": true,
+    "name": "Smart Weather Station & Alert System",
+    "description": "A solar-powered weather station that monitors rainfall, wind speed, wind direction, temperature, barometric pressure, and altitude. Uses ESP32 to publish data via MQTT to a central dashboard. Includes threshold alerts that send push notifications and emails when potential storm or flood patterns are detected.",
+    "technologies": [
+      "ESP32",
+      "MicroPython",
+      "Adafruit IO",
+      "Node-RED",
+      "MQTT",
+      "BME280"
+    ],
+    "image_url": "images/projects/weather-station-cover.jpg",
+    "image_urls": [
+      "images/projects/weather-station-1.jpg"
+    ],
+    "offer_type": "sale",
+    "price": 18500,
+    "stock_quantity": 1,
+    "status": "available",
+    "is_active": 1,
+    "is_featured": 0
+  }
+]
