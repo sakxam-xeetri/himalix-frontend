@@ -22,8 +22,8 @@ export default function Footer() {
   const services = [
     { label: 'Himalix Store', to: '/store' },
     { label: '3D Printing', to: '/services/3d-printing' },
-    { label: 'Web Agency', to: '/services/web-development' },
-    { label: 'Custom Projects', to: '/project' },
+    { label: 'Custom Projects', to: '/project?custom=true' },
+    { label: 'Himalix Projects', to: '/project' },
   ];
 
   const company = [
@@ -106,7 +106,7 @@ export default function Footer() {
             </div>
             <p className="footer__brand-desc">
               Nepal's emerging technology hub — delivering electronics, 3D printing,
-              web solutions, and custom projects with precision.
+              and custom engineering projects with precision.
             </p>
             <div className="footer__socials">
               {socials.map(s => (

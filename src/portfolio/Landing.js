@@ -66,7 +66,7 @@ function useTiltHandlers() {
 const marqueeItems = [
   { icon: 'microchip', text: 'Electronics' },
   { icon: 'cube', text: '3D Printing' },
-  { icon: 'globe', text: 'Web Development' },
+  { icon: 'square-plus', text: 'Custom Projects' },
   { icon: 'code', text: 'IoT & Software' },
   { icon: 'store', text: 'Online Store' },
   { icon: 'truck-fast', text: 'Fast Delivery' },
@@ -292,10 +292,10 @@ export default function Landing() {
                   delay: 1,
                 },
                 {
-                  icon: 'globe',
-                  title: 'Web Dev',
-                  desc: 'Modern React, Next.js websites & full-stack applications.',
-                  link: '/services/web-development',
+                  icon: 'square-plus',
+                  title: 'Custom Projects',
+                  desc: 'Request a custom engineering design, prototype, or software solution.',
+                  link: '/project?custom=true',
                   accent: '#8b5cf6',
                   accentRgb: '139, 92, 246',
                   delay: 2,
@@ -430,13 +430,14 @@ export default function Landing() {
                     if (!serviceLink || serviceLink === '#') {
                       const title = (services[activeServiceTab]?.title || '').toLowerCase();
                       if (title.includes('3d') || title.includes('print')) serviceLink = '/services/3d-printing';
-                      else if (title.includes('web')) serviceLink = '/services/web-development';
+                      else if (title.includes('custom')) serviceLink = '/project?custom=true';
+                      else if (title.includes('web')) serviceLink = '/project?custom=true';
                       else if (title.includes('project')) serviceLink = '/project';
                       else if (title.includes('store') || title.includes('shop')) serviceLink = '/store';
                       else serviceLink = '/';
                     }
                     if (serviceLink === '/3d') serviceLink = '/services/3d-printing';
-                    if (serviceLink === '/web') serviceLink = '/services/web-development';
+                    if (serviceLink === '/web' || serviceLink === '/services/web-development') serviceLink = '/project?custom=true';
 
                     return (
                       <Link to={serviceLink} className="btn btn-primary btn-lg">
@@ -795,10 +796,10 @@ const serviceSteps = [
     { title: '4. Print & Handover', desc: 'Kathmandu HQ prints your prototype and dispatches it directly.' }
   ],
   [
-    { title: '1. Select Stack Scope', desc: 'Specify project target framework (React, Next.js, Next/Laravel).' },
-    { title: '2. Choose Budget Bucket', desc: 'Match your needs against budget tiers to define timeline resources.' },
-    { title: '3. Create Design Inquiry', desc: 'Submit specifications to set up a secure communications channel.' },
-    { title: '4. Track Revisions', desc: 'Follow designer commits, approve iterations, and inspect revisions.' }
+    { title: '1. Define Requirements', desc: 'Submit project details, target features, and any hardware/software specs.' },
+    { title: '2. Alignment & Estimate', desc: 'Discuss design choices and establish a tailored development timeline.' },
+    { title: '3. Prototyping & Builds', desc: 'We design custom PCBs, assemble hardware, or write custom software code.' },
+    { title: '4. Delivery & Testing', desc: 'Receive your custom solution fully tested and ready to deploy in Nepal.' }
   ],
   [
     { title: '1. Search Technical Kit', desc: 'Browse available IoT prototypes, DIY setups, and codes.' },
@@ -813,13 +814,13 @@ const defaultHero = {};
 const defaultServices = [
   { id: 1, icon: 'store', title: 'Himalix Store', description: 'Quality electronics, gadgets, and tech accessories delivered across Nepal.', features: ['Wide product catalog', 'Wallet & referral system', 'Order tracking', 'Express delivery'], link: '/store', cta: 'Shop Now' },
   { id: 2, icon: 'cube', title: 'Himalix 3D', description: 'Professional FDM and resin 3D printing for prototypes, parts, and art pieces.', features: ['FDM & resin printing', 'Custom filament colors', 'Design assistance', 'Bulk orders'], link: '/3d', cta: 'Order Prints' },
-  { id: 3, icon: 'globe', title: 'Himalix Web', description: 'Modern websites and web applications for businesses across Nepal.', features: ['Custom design', 'React / Next.js', 'E-commerce setup', 'SEO optimization'], link: '/web', cta: 'Request Website' },
+  { id: 3, icon: 'square-plus', title: 'Custom Projects', description: 'Request custom engineering designs, hardware prototypes, or tailored software solutions.', features: ['IoT & Embedded Systems', 'Custom Software Development', 'PCB Design & Prototyping', 'Academic & Research Projects'], link: '/project?custom=true', cta: 'Request Project' },
   { id: 4, icon: 'code', title: 'Himalix Projects', description: 'Custom software, Arduino prototypes, Raspberry Pi builds, and IoT systems.', features: ['Embedded systems', 'Mobile apps', 'API integrations', 'Consulting'], link: '/project', cta: 'Explore Projects' },
 ];
 
 const defaultAbout = {
   title: "Built for Nepal's tech future.",
-  description: "Himalix Labs is a Kathmandu-based technology company delivering quality electronics, 3D printing, web solutions, and custom software — all from one place.",
+  description: "Himalix Labs is a Kathmandu-based technology company delivering quality electronics, 3D printing, and custom projects — all from one place.",
 };
 
 const defaultPillars = [
@@ -847,7 +848,7 @@ const defaultTestimonials = [
 const aboutTags = [
   { icon: 'microchip', label: 'Electronics', style: { top: '15%', left: '10%' } },
   { icon: 'cube', label: '3D Printing', style: { top: '30%', right: '8%' } },
-  { icon: 'globe', label: 'Web Dev', style: { top: '55%', left: '15%' } },
+  { icon: 'square-plus', label: 'Custom Projects', style: { top: '55%', left: '15%' } },
   { icon: 'code', label: 'IoT & Software', style: { top: '70%', right: '12%' } },
   { icon: 'truck-fast', label: 'Fast Delivery', style: { bottom: '12%', left: '25%' } },
 ];

@@ -93,6 +93,12 @@ export default function ProjectList() {
     const q = searchParams.get('search') || '';
     setSearch(q);
   }, [searchParams]);
+
+  useEffect(() => {
+    if (searchParams.get('custom') === 'true') {
+      setShowCustomModal(true);
+    }
+  }, [searchParams]);
   const [sort, setSort] = useState('newest');
 
   // Debounced search term

@@ -26,8 +26,8 @@ export default function StoreFooter() {
   const services = [
     { label: 'Himalix Store', to: '/store' },
     { label: '3D Printing', to: '/services/3d-printing' },
-    { label: 'Web Agency', to: '/services/web-development' },
-    { label: 'Custom Projects', to: '/project' },
+    { label: 'Custom Projects', to: '/project?custom=true' },
+    { label: 'Himalix Projects', to: '/project' },
   ];
 
   const legal = [
