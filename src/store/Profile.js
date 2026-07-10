@@ -538,7 +538,6 @@ export default function Profile() {
               { id: 'orders', label: 'Store Orders', icon: 'box' },
               { id: 'prints', label: '3D Print Jobs', icon: 'print' },
               { id: 'web', label: 'Web Projects', icon: 'laptop-code' },
-              { id: 'downloads', label: 'Downloads Center', icon: 'download' },
               { id: 'wallet', label: 'Wallet & Referrals', icon: 'wallet' },
               { id: 'wishlist', label: 'My Wishlist', icon: 'heart' },
               { id: 'tickets', label: 'Support Tickets', icon: 'ticket' },
