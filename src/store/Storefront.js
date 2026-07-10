@@ -124,6 +124,7 @@ export default function Storefront() {
   const [stockFilter, setStockFilter] = useState('all');
   const [imageFilter, setImageFilter] = useState(false);
   const [maxPriceLimit, setMaxPriceLimit] = useState(10000);
+  const [minPriceFilter, setMinPriceFilter] = useState(0);
   const [maxPriceFilter, setMaxPriceFilter] = useState(10000);
   const [categorySearch, setCategorySearch] = useState('');
 
@@ -132,7 +133,7 @@ export default function Storefront() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeCategory, search, sort, stockFilter, imageFilter, maxPriceFilter]);
+  }, [activeCategory, search, sort, stockFilter, imageFilter, minPriceFilter, maxPriceFilter]);
 
   useEffect(() => {
     fetch('/api/store/products')
@@ -149,6 +150,7 @@ export default function Storefront() {
           const highest = Math.max(...prods.map(p => p.price || 0), 1000);
           const roundedHighest = Math.ceil(highest / 500) * 500;
           setMaxPriceLimit(roundedHighest);
+          setMinPriceFilter(0);
           setMaxPriceFilter(roundedHighest);
         }
       })
@@ -218,8 +220,11 @@ export default function Storefront() {
       list = list.filter(p => p.image_url && p.image_url !== '/placeholder.svg' && !p.image_url.includes('placeholder'));
     }
 
-    // Apply Max Price Range Slider filter
-    list = list.filter(p => (p.price || 0) <= maxPriceFilter);
+    // Apply Price Range Slider filter (Min and Max)
+    list = list.filter(p => {
+      const price = p.price || 0;
+      return price >= minPriceFilter && price <= maxPriceFilter;
+    });
 
     switch (sort) {
       case 'price_asc': list.sort((a, b) => a.price - b.price); break;
@@ -230,7 +235,7 @@ export default function Storefront() {
     }
 
     return list;
-  }, [products, activeCategory, search, sort, stockFilter, imageFilter, maxPriceFilter]);
+  }, [products, activeCategory, search, sort, stockFilter, imageFilter, minPriceFilter, maxPriceFilter]);
 
   const clearAllFilters = useCallback(() => {
     setSearch('');
@@ -239,10 +244,11 @@ export default function Storefront() {
     setSort('default');
     setStockFilter('all');
     setImageFilter(false);
+    setMinPriceFilter(0);
     setMaxPriceFilter(maxPriceLimit);
   }, [maxPriceLimit, setSearchParams]);
 
-  const hasActiveFilters = search || activeCategory !== 'all' || sort !== 'default' || stockFilter !== 'all' || imageFilter || maxPriceFilter < maxPriceLimit;
+  const hasActiveFilters = search || activeCategory !== 'all' || sort !== 'default' || stockFilter !== 'all' || imageFilter || minPriceFilter > 0 || maxPriceFilter < maxPriceLimit;
 
   return (
     <div className="store-page">
@@ -268,7 +274,7 @@ export default function Storefront() {
       </div>
 
       {/* Promotional Projects Banner */}
-      <div className="store-promo-banner" style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-0)', padding: 'var(--space-2) var(--space-4)', textAlign: 'center', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
+      <div className="store-promo-banner" style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-0)', padding: 'var(--space-2) var(--space-4)', textAlign: 'center', fontSize: 'var(--text-sm)', fontWeight: 600, margin: 'var(--space-4) 0' }}>
         Build something amazing! Check out our prebuilt Tech Projects and Kits.
         <Link to="/project" style={{ color: 'var(--bg-0)', textDecoration: 'underline', marginLeft: 'var(--space-2)' }}>
           Explore Projects <i className="fa-light fa-arrow-right"></i>
@@ -380,36 +386,91 @@ export default function Storefront() {
 
             {/* Filter Section: Price Range Slider */}
             <div className="filter-section">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
                 <span className="filter-section-title">Price Range</span>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', color: 'var(--accent)' }}>
-                  Max: Rs. {maxPriceFilter.toLocaleString()}
+                  Rs. {minPriceFilter.toLocaleString()} - {maxPriceFilter.toLocaleString()}
                 </span>
               </div>
               
-              <div className="price-slider-container" style={{ padding: 'var(--space-2) 0' }}>
+              <div className="price-slider-container" style={{ position: 'relative', height: '24px', display: 'flex', alignItems: 'center', margin: 'var(--space-1) 0' }}>
+                {/* Background Track */}
+                <div style={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  height: '4px',
+                  background: 'var(--bg-4)',
+                  borderRadius: '2px',
+                  zIndex: 1
+                }} />
+                
+                {/* Highlighted range track */}
+                <div style={{
+                  position: 'absolute',
+                  left: `${(minPriceFilter / maxPriceLimit) * 100}%`,
+                  width: `${((maxPriceFilter - minPriceFilter) / maxPriceLimit) * 100}%`,
+                  height: '4px',
+                  background: 'var(--accent)',
+                  borderRadius: '2px',
+                  zIndex: 2
+                }} />
+                
+                <input
+                  type="range"
+                  min="0"
+                  max={maxPriceLimit}
+                  step={maxPriceLimit > 1000 ? 100 : 10}
+                  value={minPriceFilter}
+                  onChange={e => {
+                    const val = Number(e.target.value);
+                    setMinPriceFilter(Math.min(val, maxPriceFilter));
+                  }}
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    background: 'none',
+                    pointerEvents: 'none',
+                    zIndex: 3,
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    margin: 0,
+                    outline: 'none',
+                    height: '0px'
+                  }}
+                  className="dual-range-input"
+                  aria-label="Filter by minimum price"
+                />
+                
                 <input
                   type="range"
                   min="0"
                   max={maxPriceLimit}
                   step={maxPriceLimit > 1000 ? 100 : 10}
                   value={maxPriceFilter}
-                  onChange={e => setMaxPriceFilter(Number(e.target.value))}
-                  style={{
-                    width: '100%',
-                    accentColor: 'var(--accent)',
-                    cursor: 'pointer',
-                    background: 'var(--bg-4)',
-                    height: '4px',
-                    border: 'none',
-                    borderRadius: '0px'
+                  onChange={e => {
+                    const val = Number(e.target.value);
+                    setMaxPriceFilter(Math.max(val, minPriceFilter));
                   }}
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    background: 'none',
+                    pointerEvents: 'none',
+                    zIndex: 4,
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    margin: 0,
+                    outline: 'none',
+                    height: '0px'
+                  }}
+                  className="dual-range-input"
                   aria-label="Filter by maximum price"
                 />
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-3)', marginTop: 'var(--space-2)', fontFamily: 'var(--font-mono)' }}>
-                  <span>Rs. 0</span>
-                  <span>Rs. {maxPriceLimit.toLocaleString()}</span>
-                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-3)', marginTop: 'var(--space-1)', fontFamily: 'var(--font-mono)' }}>
+                <span>Rs. 0</span>
+                <span>Rs. {maxPriceLimit.toLocaleString()}</span>
               </div>
             </div>
           </aside>
