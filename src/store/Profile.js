@@ -537,7 +537,7 @@ export default function Profile() {
             {[
               { id: 'orders', label: 'Store Orders', icon: 'box' },
               { id: 'prints', label: '3D Print Jobs', icon: 'print' },
-              { id: 'web', label: 'Web Projects', icon: 'laptop-code' },
+              { id: 'web', label: 'Custom Project', icon: 'laptop-code' },
               { id: 'wallet', label: 'Wallet & Referrals', icon: 'wallet' },
               { id: 'wishlist', label: 'My Wishlist', icon: 'heart' },
               { id: 'tickets', label: 'Support Tickets', icon: 'ticket' },
@@ -869,11 +869,11 @@ export default function Profile() {
                 </div>
               ) : (
                 <div>
-                  <h2 style={{ fontSize: 'var(--text-lg)', borderBottom: '1px solid var(--border)', paddingBottom: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>Web Agency Requests</h2>
+                  <h2 style={{ fontSize: 'var(--text-lg)', borderBottom: '1px solid var(--border)', paddingBottom: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>Custom Project Requests</h2>
                   {webLoading ? (
                     <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--space-10)' }}><div className="spinner" /></div>
                   ) : webInquiries.length === 0 ? (
-                    <div style={{ padding: 'var(--space-10)', textAlign: 'center', color: 'var(--text-3)' }}>No web software inquiries found.</div>
+                    <div style={{ padding: 'var(--space-10)', textAlign: 'center', color: 'var(--text-3)' }}>No custom project inquiries found.</div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
                       {webInquiries.map(inq => (
@@ -1196,9 +1196,9 @@ export default function Profile() {
               {wishlistLoading ? (
                 <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--space-10)' }}><div className="spinner" /></div>
               ) : wishlist.length === 0 ? (
-                <div style={{ padding: 'var(--space-10)', textAlign: 'center', color: 'var(--text-3)' }}>
-                  <i className="fa-light fa-sharp fa-heart-crack" style={{ fontSize: '2.5rem', marginBottom: '12px', display: 'block', color: 'var(--text-3)' }} />
-                  Your wishlist is empty. Browse the store to save components!
+                <div style={{ padding: 'var(--space-10)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: 'var(--text-3)', border: '1px dashed var(--border)', borderRadius: '4px' }}>
+                  <i className="fa-light fa-sharp fa-heart-crack" style={{ fontSize: '2.5rem', marginBottom: '12px', color: 'var(--text-3)' }} />
+                  <span>Your wishlist is empty. Browse the store to save components!</span>
                 </div>
               ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 'var(--space-4)' }}>
@@ -1491,9 +1491,9 @@ export default function Profile() {
                   {ticketsLoading ? (
                     <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--space-10)' }}><div className="spinner" /></div>
                   ) : supportTickets.length === 0 ? (
-                    <div style={{ padding: 'var(--space-10)', textAlign: 'center', color: 'var(--text-3)', border: '1px dashed var(--border)' }}>
-                      <i className="fa-light fa-sharp fa-ticket" style={{ fontSize: '2.5rem', marginBottom: '12px', display: 'block', color: 'var(--text-3)' }} />
-                      No support tickets logged. If you run into issues, open a ticket!
+                    <div style={{ padding: 'var(--space-10)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: 'var(--text-3)', border: '1px dashed var(--border)', borderRadius: '4px' }}>
+                      <i className="fa-light fa-sharp fa-ticket" style={{ fontSize: '2.5rem', marginBottom: '12px', color: 'var(--text-3)' }} />
+                      <span>No support tickets logged. If you run into issues, open a ticket!</span>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
