@@ -864,6 +864,60 @@ function ThreeDViewer({ geometry, objGroup, color, material, dimensions }) {
         else setCustomResponses(prev => ({ ...prev, [field.id]: value }));
       };
 
+      if (field.id === 'material') {
+        return (
+          <div key={field.id} className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
+            <label className="form-label" style={{ fontWeight: 600, display: 'block', marginBottom: '8px' }}>
+              {field.label}
+            </label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {field.options && field.options.map(opt => {
+                const optValue = opt.value !== undefined ? opt.value : opt.name;
+                const isSelected = val === optValue;
+                const displayRate = opt.rate ? `Rs. ${opt.rate}/g` : 'Free';
+                return (
+                  <label
+                    key={opt.name}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      padding: '8px 14px',
+                      borderRadius: '6px',
+                      border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border)',
+                      background: isSelected ? 'var(--bg-3)' : 'var(--bg-1)',
+                      color: isSelected ? 'var(--text-0)' : 'var(--text-2)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      flex: '1 1 calc(33.33% - 8px)',
+                      minWidth: '95px',
+                      boxShadow: isSelected ? 'inset 0 0 0 1px var(--accent)' : 'none',
+                      userSelect: 'none'
+                    }}
+                    className="material-chip-radio"
+                  >
+                    <input
+                      type="radio"
+                      name="material"
+                      value={optValue}
+                      checked={isSelected}
+                      onChange={() => setMaterial(optValue)}
+                      style={{ display: 'none' }}
+                    />
+                    <span style={{ fontWeight: 700, fontSize: '13px', color: isSelected ? 'var(--accent)' : 'var(--text-1)' }}>
+                      {opt.name}
+                    </span>
+                    <span style={{ fontSize: '10px', marginTop: '2px', opacity: 0.7 }}>
+                      {displayRate}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        );
+      }
+
       return (
         <div key={field.id} className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
           <label className="form-label" style={{ fontWeight: 600 }}>{field.label}</label>
